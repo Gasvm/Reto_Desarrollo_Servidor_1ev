@@ -11,7 +11,7 @@ public class MedioDePago {
 
     public MedioDePago()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public MedioDePago(int _idMedioDePago, string _descripcion, DateTime _fechaCreacion )
@@ -19,7 +19,7 @@ public class MedioDePago {
         idMedioDePago=_idMedioDePago;
         descripcion=_descripcion;
         fechaCreacion=_fechaCreacion;
-        this.activo = true;
+        activo = true;
     }
 
 

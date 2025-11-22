@@ -13,16 +13,16 @@ public class TipoIVA{
 
     public TipoIVA()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public TipoIVA(int _idTipoIVA, string _descripcion, double _tasa, DateTime _fechaCreacion)
     {
-        this.idTipoIVA = _idTipoIVA;
-        this.descripcion = _descripcion;
-        this.tasa = _tasa;
-        this.fechaCreacion = _fechaCreacion;
-        this.activo = true;
+        idTipoIVA = _idTipoIVA;
+        descripcion = _descripcion;
+        tasa = _tasa;
+        fechaCreacion = _fechaCreacion;
+        activo = true;
         
         
     }

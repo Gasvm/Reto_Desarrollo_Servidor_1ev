@@ -13,17 +13,17 @@ public class TarjetaCredito {
 
     public TarjetaCredito()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public TarjetaCredito(int _idTarjetaCredito, string _descripcion, string _numeroTarjeta, string _fechaCaducidad, DateTime _fechaCreacion )
     {
-        this.idTarjetaCredito = _idTarjetaCredito;
-        this.descripcion = _descripcion;
-        this.numeroTarjeta = _numeroTarjeta;
-        this.fechaCaducidad = _fechaCaducidad;
-        this.fechaCreacion = _fechaCreacion;
-        this.activo = true;
+        idTarjetaCredito = _idTarjetaCredito;
+        descripcion = _descripcion;
+        numeroTarjeta = _numeroTarjeta;
+        fechaCaducidad = _fechaCaducidad;
+        fechaCreacion = _fechaCreacion;
+        activo = true;
     }
 
     

@@ -17,20 +17,20 @@ public class Cliente{
 
     public Cliente()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public Cliente(int _idCliente, string _nombre, string _apellido, string _email, string _password, string _telefono, DateTime? _fechaCreacion, List<TarjetaCredito> _tarjetasCredito)
     {
-        this.idCliente = _idCliente;
-        this.nombre = _nombre;
-        this.apellido = _apellido;
-        this.email = _email;
-        this.password = _password;
-        this.telefono = _telefono;
-        this.fechaCreacion = _fechaCreacion;
-        this.activo = true;
-        this.tarjetasCredito = _tarjetasCredito;
+        idCliente = _idCliente;
+        nombre = _nombre;
+        apellido = _apellido;
+        email = _email;
+        password = _password;
+        telefono = _telefono;
+        fechaCreacion = _fechaCreacion;
+        activo = true;
+        tarjetasCredito = _tarjetasCredito;
         
     }
     

@@ -15,17 +15,17 @@ public class PedidoCab{
 
     public PedidoCab()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public PedidoCab(int _idPedido, int _idCliente, DateTime _fechaPedido, int _idMedioPago, int _idTarjetaCredito)
     {
-        this.idPedido = _idPedido;
-        this.idCliente = _idCliente;
-        this.fechaPedido = _fechaPedido;
-        this.idMedioPago = _idMedioPago;
-        this.idTarjetaCredito = _idTarjetaCredito;
-        this.activo = true;        
+        idPedido = _idPedido;
+        idCliente = _idCliente;
+        fechaPedido = _fechaPedido;
+        idMedioPago = _idMedioPago;
+        idTarjetaCredito = _idTarjetaCredito;
+        activo = true;        
     }
     
     

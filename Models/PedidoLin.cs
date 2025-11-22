@@ -18,17 +18,17 @@ public class PedidoLin{
 
     public PedidoLin()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public PedidoLin(int _idLineaPedido, int _idPedido, int _idProducto, double _precio, double _descuento, int _tipoIVA)
     {
-        this.idLineaPedido = _idLineaPedido;
-        this.idPedido = _idPedido;
-        this.idProducto = _idProducto;
-        this.precio = _precio;
-        this.descuento = _descuento;
-        this.idTipoIVA = _tipoIVA;
+        idLineaPedido = _idLineaPedido;
+        idPedido = _idPedido;
+        idProducto = _idProducto;
+        precio = _precio;
+        descuento = _descuento;
+        idTipoIVA = _tipoIVA;
 
         
     }

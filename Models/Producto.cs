@@ -14,17 +14,17 @@ public class Producto{
 
     public Producto()
     {
-        this.activo = true;
+        activo = true;
     }
 
     public Producto(int _idProducto, string _descripcion, double _precio, int _idTipoIVA, DateTime _fechaCreacion)
     {
-        this.idProducto = _idProducto;
-        this.descripcion = _descripcion;
-        this.precio = _precio;
-        this.idTipoIVA = _idTipoIVA;
-        this.fechaCreacion = _fechaCreacion;
-        this.activo = true; 
+        idProducto = _idProducto;
+        descripcion = _descripcion;
+        precio = _precio;
+        idTipoIVA = _idTipoIVA;
+        fechaCreacion = _fechaCreacion;
+        activo = true; 
         
     }
     
