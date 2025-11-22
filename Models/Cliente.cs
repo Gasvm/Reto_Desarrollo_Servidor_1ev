@@ -20,7 +20,7 @@ public class Cliente{
         this.activo = true;
     }
 
-    public Cliente(int _idCliente, string _nombre, string _apellido, string _email, string _password, string _telefono, DateTime? _fechaCreacion List<TarjetaCredito> _tarjetasCredito)
+    public Cliente(int _idCliente, string _nombre, string _apellido, string _email, string _password, string _telefono, DateTime? _fechaCreacion, List<TarjetaCredito> _tarjetasCredito)
     {
         this.idCliente = _idCliente;
         this.nombre = _nombre;
