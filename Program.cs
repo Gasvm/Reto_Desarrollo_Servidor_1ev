@@ -1,3 +1,5 @@
+using Reto_Desarrollo_Servidor_1ev.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
