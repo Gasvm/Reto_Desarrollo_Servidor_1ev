@@ -22,7 +22,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaRegistro FROM tbClientes";
+                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaCreacion FROM tbClientes";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -37,7 +37,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 email = reader.GetString(3),
                                 password = reader.GetString(4),
                                 telefono = reader.GetString(5),
-                                fechaRegistro = reader.GetDateTime(6)
+                                fechaCreacion = reader.GetDateTime(6)
                             };
 
                             clientes.Add(cliente);
@@ -86,7 +86,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaRegistro FROM tbClientes WHERE idCliente = @Id";
+                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaCreacion FROM tbClientes WHERE idCliente = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -103,7 +103,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 email = reader.GetString(3),
                                 password = reader.GetString(4),
                                 telefono = reader.GetString(5),
-                                fechaRegistro = reader.GetDateTime(6)
+                                fechaCreacion = reader.GetDateTime(6)
                             };
                         }
                     }
@@ -121,8 +121,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbClientes (nombre, apellido, email, password, telefono, fechaRegistro, activo) " +
-                               "VALUES (@Nombre, @Apellido, @Email, @Password, @Telefono, @FechaRegistro, @Activo)";
+                string query = "INSERT INTO tbClientes (nombre, apellido, email, password, telefono, fechaCreacion, activo) " +
+                               "VALUES (@Nombre, @Apellido, @Email, @Password, @Telefono, @FechaCreacion, @Activo)";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Nombre", cliente.nombre ?? (object)DBNull.Value);
@@ -130,7 +130,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@Email", cliente.email ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Password", cliente.password ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Telefono", cliente.telefono ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FechaRegistro", cliente.fechaRegistro ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@FechaCreacion", cliente.fechaCreacion ?? DateTime.Now);
                     command.Parameters.AddWithValue("@Activo", cliente.activo);
 
                     await command.ExecuteNonQueryAsync();
@@ -147,7 +147,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 await connection.OpenAsync();
 
                 string query = "UPDATE tbClientes SET nombre = @Nombre, apellido = @Apellido, email = @Email, " +
-                               "password = @Password, telefono = @Telefono, fechaRegistro = @FechaRegistro, activo = @Activo " +
+                               "password = @Password, telefono = @Telefono, fechaCreacion = @FechaCreacion, activo = @Activo " +
                                "WHERE idCliente = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -157,7 +157,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@Email", cliente.email ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Password", cliente.password ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Telefono", cliente.telefono ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FechaRegistro", cliente.fechaRegistro ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@FechaCreacion", cliente.fechaCreacion ?? DateTime.Now);
                     command.Parameters.AddWithValue("@Activo", cliente.activo);
 
                     await command.ExecuteNonQueryAsync();
@@ -183,8 +183,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
             }
 
-
-            throw new NotImplementedException();
+();
         }
     }
 }
