@@ -2,10 +2,15 @@ using Reto_Desarrollo_Servidor_1ev.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// Espacio reservado para registrar Repositorios
+
+
+// Espacio reservado para registrar Servicios
+
+
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
