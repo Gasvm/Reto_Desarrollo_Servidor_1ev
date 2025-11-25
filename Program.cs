@@ -1,7 +1,7 @@
 using Reto_Desarrollo_Servidor_1ev.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString = builder.Configuration.GetConnectionString("SistemaPedidosDB");
 
 // Espacio reservado para registrar Repositorios
 
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -25,7 +25,7 @@ services:
       - "8607:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MyDb;User=sa;Password=YourPassword123;
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SistemaPedidosDB;User=sa;Password=AlejandroPonnosUn10(!);
     depends_on:
       - sqlserver
     volumes:
@@ -41,7 +41,7 @@ services:
       - "7068:1433"
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=AlejandroPonnosUn10
+      - MSSQL_SA_PASSWORD=AlejandroPonnosUn10(!)
       - MSSQL_PID=Express
     volumes:
       - sqlserver_data:/var/opt/mssql
