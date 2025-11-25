@@ -1,4 +1,4 @@
-using Models;
+namespace Reto_Desarrollo_Servidor_1ev.Models;
 
 public class QueryParamsFilters {
 

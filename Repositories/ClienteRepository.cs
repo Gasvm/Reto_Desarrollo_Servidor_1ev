@@ -1,5 +1,6 @@
+using Reto_Desarrollo_Servidor_1ev.Models;
 using System.Data;
-using Micorosoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace Reto_Desarrollo_Servidor_1ev.Repositories
 {
