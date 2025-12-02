@@ -39,7 +39,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             var pedidoCab = new PedidoCab
                             {
                                 idPedido = reader.GetInt32(0),
-                                idCliente = reader.GetString(1),
+                                idCliente = reader.GetInt32(1),
                                 fechaPedido = reader.GetDateTime(2),
                                 idMedioPago = reader.GetInt32(3),
                                 idTarjetaCredito = reader.GetInt32(4)
@@ -50,47 +50,42 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 // Aplicación de filtros
-                // Filtro por IdCliente
-                var _filtroIdCliente = filtroIdCliente.filtroIdCliente ?? "";
-                _filtroIdCliente.AsQueryable();
-                
                 var miQuery = pedidosCab.AsQueryable();
-
-                if (!string.IsNullOrEmpty(_filtroIdCliente))
+                
+                // Filtro por IdCliente
+                var _filtroIdCliente = filtroIdCliente?.filtroIdCliente;
+                if (_filtroIdCliente.HasValue)
                 {
-                    miQuery = miQuery.Where(p => p.idCliente != null &&
-                                            p.idCliente.ToString().Contains(_filtroIdCliente, StringComparison.OrdinalIgnoreCase));                    
+                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente.Value);                    
                 }
 
                 // Filtro por IdMedioPago
-                var _filtroIdMedioPago = filtroIdMedioPago.filtroIdMedioPago ?? "";
-                _filtroIdMedioPago.AsQueryable();
-                if (!string.IsNullOrEmpty(_filtroIdMedioPago))
+                var _filtroIdMedioPago = filtroIdMedioPago?.filtroIdMedioPago;
+                if (_filtroIdMedioPago.HasValue)
                 {
-                    miQuery = miQuery.Where(p => m.idMedioPago != null &&
-                                            p.idMedioPago.ToString().Contains(_filtroIdMedioPago, StringComparison.OrdinalIgnoreCase));                    
+                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago.Value);                    
                 }
 
                 // Filtro por FechaPedidoDesde
-                var _filtroFechaPedidoDesde = filtroFechaPedidoDesde.filtroFechaPedidoDesde;
+                var _filtroFechaPedidoDesde = filtroFechaPedidoDesde?.filtroFechaPedidoDesde;
                 if (_filtroFechaPedidoDesde.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido >= _filtroFechaPedidoDesde.Value);
                 }
 
                 // Filtro por FechaPedidoHasta
-                var _filtroFechaPedidoHasta = filtroFechaPedidoHasta.filtroFechaPedidoHasta;
+                var _filtroFechaPedidoHasta = filtroFechaPedidoHasta?.filtroFechaPedidoHasta;
                 if (_filtroFechaPedidoHasta.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido <= _filtroFechaPedidoHasta.Value);
                 }
 
                 // Filtro por EstadoActivo
-                var _estadoActivoMedioDePago = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoPedidoCab = filtroEstadoActivo?.filtroEstadoActivo;
                 
-                if (_estadoActivoMedioDePago.HasValue)
+                if (_estadoActivoPedidoCab.HasValue)
                 {
-                    miQuery = miQuery.Where(p => p.activo == _estadoActivoMedioDePago.Value);
+                    miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoCab.Value);
                 }
 
                 if (miQuery.Any())

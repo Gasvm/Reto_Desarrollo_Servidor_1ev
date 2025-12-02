@@ -51,17 +51,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 // Aplicación de filtros
-                //Filtro por IdClienteTarjeta
-                var _filtroIdClienteTarjeta = idClienteTarjeta.filtroIdClienteTarjeta;
-                if (_filtroIdClienteTarjeta.HasValue)
-                {
-                    tarjetasCredito = tarjetasCredito
-                                    .Where(t => t.idClienteTarjeta == _filtroIdClienteTarjeta.Value)
-                                    .ToList();
-                }
+                // Nota: El filtro idClienteTarjeta no se aplica porque TarjetaCredito no tiene idCliente
+                // Este filtro sería más apropiado aplicarlo a través de la relación Cliente -> TarjetasCredito
 
                 //Filtro por DescripcionTarjeta
-                var _filtroDescripcionTarjeta = descripcionTarjeta.filtroDescripcionTarjeta ?? "";
+                var _filtroDescripcionTarjeta = descripcionTarjeta?.filtroDescripcionTarjeta ?? "";
                 _filtroDescripcionTarjeta.AsQueryable();
                 var miQuery = tarjetasCredito.AsQueryable();
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
@@ -70,26 +64,26 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             t.descripcion.ToString().Contains(_filtroDescripcionTarjeta, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por NumeroTarjeta
-                var _filtroNumeroTarjeta = numeroTarjeta.filtroNumeroTarjeta ?? "";
+                var _filtroNumeroTarjeta = numeroTarjeta?.filtroNumeroTarjeta ?? "";
                 if (!string.IsNullOrEmpty(_filtroNumeroTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.numeroTarjeta != null &&
                                             t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por FechaCaducidadDesde
-                var _filtroFechaCaducidadDesde = fechaCaducidadDesde.filtroFechaCaducidadDesde;
+                var _filtroFechaCaducidadDesde = fechaCaducidadDesde?.filtroFechaCaducidadDesde;
                 if (_filtroFechaCaducidadDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad >= _filtroFechaCaducidadDesde.Value);
                 }
                 // Filtro por FechaCaducidadHasta
-                var _filtroFechaCaducidadHasta = fechaCaducidadHasta.filtroFechaCaducidadHasta;
+                var _filtroFechaCaducidadHasta = fechaCaducidadHasta?.filtroFechaCaducidadHasta;
                 if (_filtroFechaCaducidadHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad <= _filtroFechaCaducidadHasta.Value);
                 }
                 // Filtro por EstadoActivo
-                var _estadoActivoTarjeta = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoTarjeta = estadoActivo?.filtroEstadoActivo;
                 if (_estadoActivoTarjeta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTarjeta.Value);
@@ -156,7 +150,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@NumeroTarjeta", tarjetaCredito.numeroTarjeta ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@NumeroTarjeta", tarjetaCredito.numeroTarjeta ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCaducidad", tarjetaCredito.fechaCaducidad ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tarjetaCredito.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tarjetaCredito.activo);
@@ -181,11 +175,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Precio", tarjetaCredito.numeroTarjeta ?? DateTime.Now);
-                    command.Parameters.AddWithValue("@IdTipoIVA", tarjetaCredito.fechaCaducidad ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@NumeroTarjeta", tarjetaCredito.numeroTarjeta ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@FechaCaducidad", tarjetaCredito.fechaCaducidad ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tarjetaCredito.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tarjetaCredito.activo);
-                    command.Parameters.AddWithValue("@Id", tarjetaCredito.idTarjetaCredito ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Id", tarjetaCredito.idTarjetaCredito);
                     await command.ExecuteNonQueryAsync();
                 }
             }

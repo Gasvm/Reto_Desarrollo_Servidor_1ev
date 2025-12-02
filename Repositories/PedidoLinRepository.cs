@@ -52,14 +52,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 // Aplicación de filtros
-                // Filtro por IdCliente
-                var _filtroIdCliente = IdPedido.filtroIdCliente;
+                // Filtro por IdPedido
+                var _filtroIdPedido = IdPedido.filtroIdPedido;
 
                 var miQuery = pedidosLin.AsQueryable();
 
-                if (_filtroIdCliente.HasValue)
+                if (_filtroIdPedido.HasValue)
                 {
-                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente.Value);
+                    miQuery = miQuery.Where(p => p.idPedido == _filtroIdPedido.Value);
                 }
 
                 // Filtro por filtroIdProducto
@@ -73,9 +73,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 // Filtro por EstadoActivo
                 var _estadoActivoPedidoLin = EstadoActivo.filtroEstadoActivo;
                 
-                if (_estadoActivoMedioDePago.HasValue)
+                if (_estadoActivoPedidoLin.HasValue)
                 {
-                    miQuery = miQuery.Where(p => p.activo == _estadoActivoMedioDePago.Value);
+                    miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoLin.Value);
                 }
 
                 if (miQuery.Any())
@@ -137,16 +137,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbPedidoLin (idCliente, fechaPedido, " +
-                                "idMedioPago, idTarjetaCredito, activo) " +
-                               "VALUES (@IdCliente, @FechaPedido, @IdMedioPago, " +
-                               "@IdTarjetaCredito, @Activo,)";
+                string query = "INSERT INTO tbPedidoLin (idPedido, idProducto, " +
+                                "precio, descuento, idTipoIVA, cantidad, totalLinea, activo) " +
+                               "VALUES (@IdPedido, @IdProducto, @Precio, " +
+                               "@Descuento, @IdTipoIVA, @Cantidad, @TotalLinea, @Activo)";
                 using (var command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@IdCliente", pedidoLin.idCliente ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@FechaPedido", pedidoLin.fechaPedido ?? DateTime.Now);
-                    command.Parameters.AddWithValue("@IdMedioPago", pedidoLin.idMedioPago ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@IdTarjetaCredito", pedidoLin.idTarjetaCredito ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@IdPedido", pedidoLin.idPedido ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@IdProducto", pedidoLin.idProducto ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Precio", pedidoLin.precio ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Descuento", pedidoLin.descuento ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@IdTipoIVA", pedidoLin.idTipoIVA ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Cantidad", pedidoLin.cantidad ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@TotalLinea", pedidoLin.totalLinea ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", pedidoLin.activo);
                     
                     await command.ExecuteNonQueryAsync();
@@ -165,7 +168,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 string query = "UPDATE tbPedidoLin SET idPedido = @IdPedido, " +
                                 "idProducto = @IdProducto, precio = @Precio, " +
                                 "descuento = @Descuento, idTipoIVA = @IdTipoIVA, " +
-                                "cantidad = @Cantidad, totalLinea = @TotalLinea " +
+                                "cantidad = @Cantidad, totalLinea = @TotalLinea, " +
                                 "activo = @Activo " +
                                 "WHERE idLineaPedido = @Id";
                 using (var command = new SqlCommand(query, connection))
@@ -177,7 +180,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@IdTipoIVA", pedidoLin.idTipoIVA ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Cantidad", pedidoLin.cantidad ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@TotalLinea", pedidoLin.totalLinea ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Activo", pedidoLin.activo ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Activo", pedidoLin.activo);
                     command.Parameters.AddWithValue("@Id", pedidoLin.idLineaPedido);
 
                     await command.ExecuteNonQueryAsync();

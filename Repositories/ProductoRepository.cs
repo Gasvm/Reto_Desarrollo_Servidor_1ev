@@ -101,7 +101,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
 
         //No aplicado filtro de estadoActivo ya que se asume que se quiere obtener el producto aunque esté inactivo
-        public async Task<PedidoCab?> GetByIdAsync(int id)
+        public async Task<Producto?> GetByIdAsync(int id)
         {
             Producto? producto = null;
 
@@ -151,7 +151,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", producto.descripcion ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Precio", producto.precio ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@Precio", producto.precio ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@IdTipoIVA", producto.idTipoIVA ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", producto.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", producto.activo);
@@ -176,12 +176,10 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", producto.descripcion ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Precio", producto.precio ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@Precio", producto.precio ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@IdTipoIVA", producto.idTipoIVA ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", producto.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", producto.activo);
-
-                    await command.ExecuteNonQueryAsync();
                 }
             }
 

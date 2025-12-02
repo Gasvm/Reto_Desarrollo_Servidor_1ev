@@ -7,7 +7,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
         Task<List<PedidoLin>> GetAllAsync(
                 QueryParamsFilters? filtroIdPedido = null, 
                 QueryParamsFilters? filtroIdProducto = null, 
-                QueryParamsFilters? filtroEstadoActivo = true
+                QueryParamsFilters? filtroEstadoActivo = null
                 );
         Task<PedidoLin?> GetByIdAsync(int id);
         Task AddAsync(PedidoLin pedidoLin);

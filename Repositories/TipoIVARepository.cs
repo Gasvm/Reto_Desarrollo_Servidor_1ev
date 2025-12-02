@@ -51,7 +51,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 // Aplicación de filtros
                 //Filtro por TasaMinima
-                var _filtroTasaMinima = tasaMinima.filtroTasaMinima;
+                var _filtroTasaMinima = tasaMinima?.filtroTasaMinima;
                 if (_filtroTasaMinima.HasValue)
                 {
                     tiposIVA = tiposIVA
@@ -59,7 +59,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                     .ToList();
                 }
                 //Filtro por TasaMaxima
-                var _filtroTasaMaxima = tasaMaxima.filtroTasaMaxima;
+                var _filtroTasaMaxima = tasaMaxima?.filtroTasaMaxima;
                 if (_filtroTasaMaxima.HasValue)
                 {
                     tiposIVA = tiposIVA
@@ -67,7 +67,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                     .ToList();
                 }
                 //Filtro por DescripcionTipoIVA
-                var _filtroDescripcionTipoIVA = descripcionTipoIVA.filtroDescripcionTipoIVA ?? "";
+                var _filtroDescripcionTipoIVA = descripcionTipoIVA?.filtroDescripcionTipoIVA ?? "";
                 _filtroDescripcionTipoIVA.AsQueryable();
                 var miQuery = tiposIVA.AsQueryable();
                 if (!string.IsNullOrEmpty(_filtroDescripcionTipoIVA))
@@ -76,19 +76,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por FechaCreacionDesde
-                var _filtroFechaCreacionDesde = fechaCreacionDesde.filtroFechaCreacionDesde;
+                var _filtroFechaCreacionDesde = fechaCreacionDesde?.filtroFechaCreacionDesde;
                 if (_filtroFechaCreacionDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion >= _filtroFechaCreacionDesde.Value);
                 }
                 // Filtro por FechaCreacionHasta
-                var _filtroFechaCreacionHasta = fechaCreacionHasta.filtroFechaCreacionHasta;
+                var _filtroFechaCreacionHasta = fechaCreacionHasta?.filtroFechaCreacionHasta;
                 if (_filtroFechaCreacionHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion <= _filtroFechaCreacionHasta.Value);
                 }
                 // Filtro por EstadoActivo
-                var _estadoActivoTipoIVA = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoTipoIVA = estadoActivo?.filtroEstadoActivo;
                 if (_estadoActivoTipoIVA.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTipoIVA.Value);
@@ -154,7 +154,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tipoIVA.descripcion ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Tasa", tipoIVA.tasa ?? DateTime.Now);
+                    command.Parameters.AddWithValue("@Tasa", tipoIVA.tasa ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tipoIVA.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tipoIVA.activo);
                     
@@ -181,7 +181,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@Tasa", tipoIVA.tasa ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tipoIVA.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tipoIVA.activo);
-                    command.Parameters.AddWithValue("@Id", tipoIVA.idTipoIVA ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Id", tipoIVA.idTipoIVA);
 
                     await command.ExecuteNonQueryAsync();
                 }

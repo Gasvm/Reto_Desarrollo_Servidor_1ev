@@ -47,7 +47,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         /* OPCIÓN 2 - PASAMOS EL OBJETO A LA CAPA SERVICE - MEJOR OPCIÓN */
 
         [HttpGet]
-        public async Task<ActionResult<List<Cliente>>> GetClientes([FromQuery] QueryParamsFilters? nombreCliente = null, QueryParamsFilters? estadoActivo)
+        public async Task<ActionResult<List<Cliente>>> GetClientes([FromQuery] QueryParamsFilters? nombreCliente = null, QueryParamsFilters? estadoActivo = null)
         {
             var _nombreCliente = nombreCliente ?? null;
             var _estadoActivo = estadoActivo ?? null;

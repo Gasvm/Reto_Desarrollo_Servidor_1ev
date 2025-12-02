@@ -15,7 +15,7 @@ public class TarjetaCredito {
         activo = true;
     }
 
-    public TarjetaCredito(int _idTarjetaCredito, string _descripcion, string _numeroTarjeta, string _fechaCaducidad, DateTime _fechaCreacion )
+    public TarjetaCredito(int _idTarjetaCredito, string _descripcion, string _numeroTarjeta, DateTime? _fechaCaducidad, DateTime _fechaCreacion )
     {
         idTarjetaCredito = _idTarjetaCredito;
         descripcion = _descripcion;

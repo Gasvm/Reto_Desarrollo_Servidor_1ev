@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 QueryParamsFilters? filtroNumeroTarjeta = null,
                 QueryParamsFilters? filtroFechaCaducidadDesde = null,
                 QueryParamsFilters? filtroFechaCaducidadHasta = null,
-                QueryParamsFilters? filtroEstadoActivo = true //¿Debería ser null por defecto?
+                QueryParamsFilters? filtroEstadoActivo = null
                 );
         Task<TarjetaCredito?> GetByIdAsync(int id);
         Task AddAsync(TarjetaCredito tarjetaCredito);

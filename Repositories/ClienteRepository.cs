@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public ClienteRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaCreacion FROM tbClientes";
+                string query = "SELECT idCliente, nombre, apellidos, email, password, telefono, fechaCreacion FROM tbClientes";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -46,21 +46,25 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 
-                var _nombreCliente = NombreCliente.filtroNombreCliente ?? "";
+                var _nombreCliente = NombreCliente?.filtroNombreCliente ?? "";
                 _nombreCliente.AsQueryable();
                 
                 var miQuery = clientes.AsQueryable();
 
                 if (!string.IsNullOrEmpty(_nombreCliente))
                 {
-                    miQuery = miQuery.Where(c => c.nombre != null &&
-                                            c.Nombre.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
+                    miQuery = miQuery.Where(c => c.nombre != null &&  c.nombre.Contains(_nombreCliente));
+
+                    // miQuery = miQuery.Where(c => c.nombre != null &&
+                    //                         c.nombre.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
+                    //                         var q = miQuery.ToList();
+                    //                         Console.WriteLine(q);
                     // Añadido filtro para buscar también por apellidos
-                    miQuery = miQuery.Where(c => c.apellidos != null &&
-                                            c.apellidos.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
+                    // miQuery = miQuery.Where(c => c.apellidos != null &&
+                                            // c.apellidos.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
                 }
 
-                var _estadoActivoCliente = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoCliente = estadoActivo?.filtroEstadoActivo;
                 
                 if (_estadoActivoCliente.HasValue)
                 {
@@ -87,7 +91,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "SELECT idCliente, nombre, apellido, email, password, telefono, fechaCreacion FROM tbClientes WHERE idCliente = @Id";
+                string query = "SELECT idCliente, nombre, apellidos, email, password, telefono, fechaCreacion FROM tbClientes WHERE idCliente = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -122,12 +126,12 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbClientes (nombre, apellido, email, password, telefono, fechaCreacion, activo) " +
-                               "VALUES (@Nombre, @Apellido, @Email, @Password, @Telefono, @FechaCreacion, @Activo)";
+                string query = "INSERT INTO tbClientes (nombre, apellidos, email, password, telefono, fechaCreacion, activo) " +
+                               "VALUES (@Nombre, @Apellidos, @Email, @Password, @Telefono, @FechaCreacion, @Activo)";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Nombre", cliente.nombre ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Apellido", cliente.apellidos ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Apellidos", cliente.apellidos ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Email", cliente.email ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Password", cliente.password ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Telefono", cliente.telefono ?? (object)DBNull.Value);
@@ -147,14 +151,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "UPDATE tbClientes SET nombre = @Nombre, apellido = @Apellido, email = @Email, " +
+                string query = "UPDATE tbClientes SET nombre = @Nombre, apellidos = @Apellidos, email = @Email, " +
                                "password = @Password, telefono = @Telefono, fechaCreacion = @FechaCreacion, activo = @Activo " +
                                "WHERE idCliente = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", cliente.idCliente ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Nombre", cliente.nombre ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Apellido", cliente.apellidos ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@Apellidos", cliente.apellidos ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Email", cliente.email ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Password", cliente.password ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Telefono", cliente.telefono ?? (object)DBNull.Value);

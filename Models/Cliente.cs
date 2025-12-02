@@ -3,7 +3,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Models;
 public class Cliente{
 
     public int? idCliente {get; set;}
-    public string? nombre {get; set;}
+    public string? nombre {get; set;} //#Todo eliminar null para los campos que no puedan ser nulos
     public string? apellidos {get; set;}
     public string? email {get; set;}
     public string? password {get; set;}

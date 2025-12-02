@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 QueryParamsFilters? filtroDescripcionTipoIVA = null,
                 QueryParamsFilters? filtroFechaCreacionDesde = null,
                 QueryParamsFilters? filtroFechaCreacionHasta = null,
-                QueryParamsFilters? filtroEstadoActivo = true
+                QueryParamsFilters? filtroEstadoActivo = null
                 );
         Task<TipoIVA?> GetByIdAsync(int id);
         Task AddAsync(TipoIVA tipoIVA);

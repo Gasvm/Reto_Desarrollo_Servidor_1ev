@@ -9,7 +9,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 QueryParamsFilters? filtroIdMedioPago = null, 
                 QueryParamsFilters? filtroFechaPedidoDesde = null, 
                 QueryParamsFilters? filtroFechaPedidoHasta = null, 
-                QueryParamsFilters? filtroEstadoActivo = true //¿Debería ser null por defecto?
+                QueryParamsFilters? filtroEstadoActivo = null
                 );
         Task<PedidoCab?> GetByIdAsync(int id);
         Task AddAsync(PedidoCab pedidoCab);

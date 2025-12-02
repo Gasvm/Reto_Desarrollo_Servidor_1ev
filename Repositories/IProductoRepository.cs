@@ -9,7 +9,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 QueryParamsFilters? filtroPrecioMinimo = null, 
                 QueryParamsFilters? filtroPrecioMaximo = null,
                 QueryParamsFilters? filtroIdTipoIVA = null,
-                QueryParamsFilters? filtroEstadoActivo = true
+                QueryParamsFilters? filtroEstadoActivo = null
                 );
         Task<Producto?> GetByIdAsync(int id);
         Task AddAsync(Producto producto);
