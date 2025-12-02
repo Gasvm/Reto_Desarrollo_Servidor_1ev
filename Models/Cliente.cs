@@ -22,7 +22,7 @@ public class Cliente{
     {
         idCliente = _idCliente;
         nombre = _nombre;
-        apellido = _apellido;
+        apellidos = _apellido;
         email = _email;
         password = _password;
         telefono = _telefono;
