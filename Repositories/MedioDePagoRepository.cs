@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public MedioDePagoRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -50,7 +50,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_descripcionMedioDePago))
                 {
                     miQuery = miQuery.Where(m => m.descripcion != null &&
-                                            m.descripcion.Contains(_descripcionMedioDePago, StringComparison.OrdinalIgnoreCase));                    
+                                            m.descripcion.Contains(_descripcionMedioDePago));                    
                 }
 
                 var _estadoActivoMedioDePago = filters.filtroEstadoActivo;

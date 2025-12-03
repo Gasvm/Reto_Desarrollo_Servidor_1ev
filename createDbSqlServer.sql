@@ -34,8 +34,8 @@ CREATE TABLE tbClientes (
     activo BIT DEFAULT 1
 );
 
--- Tabla tbMedioDePago (Tabla maestra - sin dependencias)
-CREATE TABLE tbMedioDePago (
+-- Tabla tbMediosDePago (Tabla maestra - sin dependencias)
+CREATE TABLE tbMediosDePago (
     idMedioDePago INT IDENTITY(1,1) PRIMARY KEY,
     descripcion NVARCHAR(100) NOT NULL,
     fechaCreacion DATETIME DEFAULT GETDATE(),
@@ -74,7 +74,7 @@ CREATE TABLE tbPedidoCab (
     idTarjetaCredito INT,
     activo BIT DEFAULT 1,
     FOREIGN KEY (idCliente) REFERENCES tbClientes(idCliente),
-    FOREIGN KEY (idMedioPago) REFERENCES tbMedioDePago(idMedioDePago),
+    FOREIGN KEY (idMedioPago) REFERENCES tbMediosDePago(idMedioDePago),
     FOREIGN KEY (idTarjetaCredito) REFERENCES tbTarjetaCredito(idTarjetaCredito)
 );
 
@@ -107,7 +107,7 @@ VALUES
 ('Sin IVA (0%)', 0.00, 1);
 
 -- Insertar Medios de Pago
-INSERT INTO tbMedioDePago (descripcion, activo)
+INSERT INTO tbMediosDePago (descripcion, activo)
 VALUES 
 ('Tarjeta de Crédito', 1),
 ('Tarjeta de Débito', 1),
