@@ -4,10 +4,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 {
     public interface IMedioDePagoRepository
     {
-        Task<List<MedioDePago>> GetAllAsync(
-                QueryParamsFilters? filtroDescripcionMedioDePago = null, 
-                QueryParamsFilters? filtroEstadoActivo = null
-            );
+        Task<List<MedioDePago>> GetAllAsync(QueryParamsFilters? filters);
         Task<MedioDePago?> GetByIdAsync(int id);
         Task AddAsync(MedioDePago medioDePago);
         Task UpdateAsync(MedioDePago medioDePago);

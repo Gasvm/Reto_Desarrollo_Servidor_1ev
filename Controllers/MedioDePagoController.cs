@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MedioDePago>>> GetMediosDePago([FromQuery] QueryParamsFilters? filtros)
         {
-            var medios = await _medioDePagoService.GetAllAsync(filtros, filtros);
+            var medios = await _medioDePagoService.GetAllAsync(filtros);
             return Ok(medios);
         }
 

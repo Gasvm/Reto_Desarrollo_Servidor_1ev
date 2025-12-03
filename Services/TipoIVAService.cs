@@ -12,9 +12,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             _tipoIVARepository = tipoIVARepository;
         }
 
-        public async Task<List<TipoIVA>> GetAllAsync(QueryParamsFilters? filtroTasaMinima = null, QueryParamsFilters? filtroTasaMaxima = null, QueryParamsFilters? filtroDescripcionTipoIVA = null, QueryParamsFilters? filtroFechaCreacionDesde = null, QueryParamsFilters? filtroFechaCreacionHasta = null, QueryParamsFilters? filtroEstadoActivo = null)
+        public async Task<List<TipoIVA>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _tipoIVARepository.GetAllAsync(filtroTasaMinima, filtroTasaMaxima, filtroDescripcionTipoIVA, filtroFechaCreacionDesde, filtroFechaCreacionHasta, filtroEstadoActivo);
+            return await _tipoIVARepository.GetAllAsync(filters);
         }
 
         public async Task<TipoIVA?> GetByIdAsync(int id)

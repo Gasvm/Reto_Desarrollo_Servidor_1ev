@@ -15,13 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todos los medios de pago de la base de datos
-        public async Task<List<Producto>> GetAllAsync(
-                    QueryParamsFilters? descripcionProducto, 
-                    QueryParamsFilters? precioMinimo, 
-                    QueryParamsFilters? precioMaximo, 
-                    QueryParamsFilters? idTipoIVA, 
-                    QueryParamsFilters? estadoActivo
-                    )
+        public async Task<List<Producto>> GetAllAsync(QueryParamsFilters? filters)
         {
             var productos = new List<Producto>();
 
@@ -51,7 +45,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 // Aplicación de filtros
                 // Filtro por DescripcionProducto
-                var _filtroDescripcionProducto = descripcionProducto.filtroDescripcionProducto ?? "";
+                var _filtroDescripcionProducto = filters.filtroDescripcionProducto ?? "";
                 _filtroDescripcionProducto.AsQueryable();
                 
                 var miQuery = productos.AsQueryable();
@@ -62,19 +56,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             p.descripcion.ToString().Contains(_filtroDescripcionProducto, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por PrecioMinimo
-                var _filtroPrecioMinimo = precioMinimo.filtroPrecioMinimo;
+                var _filtroPrecioMinimo = filters.filtroPrecioMinimo;
                 if (_filtroPrecioMinimo.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.precio >= _filtroPrecioMinimo.Value);
                 }
                 // Filtro por PrecioMaximo
-                var _filtroPrecioMaximo = precioMaximo.filtroPrecioMaximo;
+                var _filtroPrecioMaximo = filters.filtroPrecioMaximo;
                 if (_filtroPrecioMaximo.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.precio <= _filtroPrecioMaximo.Value);
                 }
                 // Filtro por IdTipoIVA
-                var _filtroIdTipoIVA = idTipoIVA.filtroIdTipoIVA;
+                var _filtroIdTipoIVA = filters.filtroIdTipoIVA;
                 
                 if (_filtroIdTipoIVA.HasValue)
                 {
@@ -82,7 +76,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 
                 // Filtro por EstadoActivo
-                var _estadoActivoMedioDePago = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoMedioDePago = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoMedioDePago.HasValue)
                 {

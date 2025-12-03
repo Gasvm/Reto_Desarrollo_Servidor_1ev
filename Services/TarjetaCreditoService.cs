@@ -12,9 +12,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             _tarjetaCreditoRepository = tarjetaCreditoRepository;
         }
 
-        public async Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filtroIdClienteTarjeta = null, QueryParamsFilters? filtroDescripcionTarjeta = null, QueryParamsFilters? filtroNumeroTarjeta = null, QueryParamsFilters? filtroFechaCaducidadDesde = null, QueryParamsFilters? filtroFechaCaducidadHasta = null, QueryParamsFilters? filtroEstadoActivo = null)
+        public async Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _tarjetaCreditoRepository.GetAllAsync(filtroIdClienteTarjeta, filtroDescripcionTarjeta, filtroNumeroTarjeta, filtroFechaCaducidadDesde, filtroFechaCaducidadHasta, filtroEstadoActivo);
+            return await _tarjetaCreditoRepository.GetAllAsync(filters);
         }
 
         public async Task<TarjetaCredito?> GetByIdAsync(int id)

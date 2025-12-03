@@ -4,11 +4,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 {
     public interface IPedidoLinRepository
     {
-        Task<List<PedidoLin>> GetAllAsync(
-                QueryParamsFilters? filtroIdPedido = null, 
-                QueryParamsFilters? filtroIdProducto = null, 
-                QueryParamsFilters? filtroEstadoActivo = null
-                );
+        Task<List<PedidoLin>> GetAllAsync(QueryParamsFilters? filters);
         Task<PedidoLin?> GetByIdAsync(int id);
         Task AddAsync(PedidoLin pedidoLin);
         Task UpdateAsync(PedidoLin pedidoLin);

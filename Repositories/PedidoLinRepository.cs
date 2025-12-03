@@ -15,11 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todos los medios de pago de la base de datos
-        public async Task<List<PedidoLin>> GetAllAsync(
-                    QueryParamsFilters? IdPedido, 
-                    QueryParamsFilters? IdProducto, 
-                    QueryParamsFilters? EstadoActivo
-                    )
+        public async Task<List<PedidoLin>> GetAllAsync(QueryParamsFilters? filters)
         {
             var pedidosLin = new List<PedidoLin>();
 
@@ -53,25 +49,25 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 // Aplicación de filtros
                 // Filtro por IdPedido
-                var _filtroIdPedido = IdPedido.filtroIdPedido;
+                var _filtroIdPedido = filters.filtroIdPedido ?? -1;
 
                 var miQuery = pedidosLin.AsQueryable();
 
-                if (_filtroIdPedido.HasValue)
+                if (_filtroIdPedido >0)
                 {
-                    miQuery = miQuery.Where(p => p.idPedido == _filtroIdPedido.Value);
+                    miQuery = miQuery.Where(p => p.idPedido == _filtroIdPedido);
                 }
 
                 // Filtro por filtroIdProducto
-                var _filtroIdProducto = IdProducto.filtroIdProducto;
+                var _filtroIdProducto = filters.filtroIdProducto ?? -1;
                 
-                if (_filtroIdProducto.HasValue)
+                if (_filtroIdProducto > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idProducto == _filtroIdProducto.Value);
+                    miQuery = miQuery.Where(p => p.idProducto == _filtroIdProducto);
                 }
 
                 // Filtro por EstadoActivo
-                var _estadoActivoPedidoLin = EstadoActivo.filtroEstadoActivo;
+                var _estadoActivoPedidoLin = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoPedidoLin.HasValue)
                 {

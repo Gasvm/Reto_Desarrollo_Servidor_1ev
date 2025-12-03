@@ -4,14 +4,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 {
     public interface ITarjetaCreditoRepository
     {
-        Task<List<TarjetaCredito>> GetAllAsync(
-                QueryParamsFilters? filtroIdClienteTarjeta = null, 
-                QueryParamsFilters? filtroDescripcionTarjeta = null, 
-                QueryParamsFilters? filtroNumeroTarjeta = null,
-                QueryParamsFilters? filtroFechaCaducidadDesde = null,
-                QueryParamsFilters? filtroFechaCaducidadHasta = null,
-                QueryParamsFilters? filtroEstadoActivo = null
-                );
+        Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters);
         Task<TarjetaCredito?> GetByIdAsync(int id);
         Task AddAsync(TarjetaCredito tarjetaCredito);
         Task UpdateAsync(TarjetaCredito tarjetaCredito);

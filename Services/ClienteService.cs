@@ -13,9 +13,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             
         }
 
-        public async Task<List<Cliente>> GetAllAsync(QueryParamsFilters? nombreCliente = null, QueryParamsFilters? estadoActivo = null)
+        public async Task<List<Cliente>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _ClienteRepository.GetAllAsync(nombreCliente, estadoActivo);
+            return await _ClienteRepository.GetAllAsync(filters);
         }
 
         public async Task<Cliente?> GetByIdAsync(int id)

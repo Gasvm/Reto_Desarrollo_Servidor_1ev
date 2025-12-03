@@ -12,9 +12,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             _productoRepository = productoRepository;
         }
 
-        public async Task<List<Producto>> GetAllAsync(QueryParamsFilters? filtroDescripcionProducto = null, QueryParamsFilters? filtroPrecioMinimo = null, QueryParamsFilters? filtroPrecioMaximo = null, QueryParamsFilters? filtroIdTipoIVA = null, QueryParamsFilters? filtroEstadoActivo = null)
+        public async Task<List<Producto>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _productoRepository.GetAllAsync(filtroDescripcionProducto, filtroPrecioMinimo, filtroPrecioMaximo, filtroIdTipoIVA, filtroEstadoActivo);
+            return await _productoRepository.GetAllAsync(filters);
         }
 
         public async Task<Producto?> GetByIdAsync(int id)

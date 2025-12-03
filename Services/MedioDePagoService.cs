@@ -12,9 +12,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             _medioDePagoRepository = medioDePagoRepository;
         }
 
-        public async Task<List<MedioDePago>> GetAllAsync(QueryParamsFilters? filtroDescripcionMedioDePago = null, QueryParamsFilters? filtroEstadoActivo = null)
+        public async Task<List<MedioDePago>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _medioDePagoRepository.GetAllAsync(filtroDescripcionMedioDePago, filtroEstadoActivo);
+            return await _medioDePagoRepository.GetAllAsync(filters);
         }
 
         public async Task<MedioDePago?> GetByIdAsync(int id)

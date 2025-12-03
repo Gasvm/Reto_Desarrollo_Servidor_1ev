@@ -15,14 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todas las tarjetas de la base de datos
-        public async Task<List<TipoIVA>> GetAllAsync(
-                    QueryParamsFilters? tasaMinima, 
-                    QueryParamsFilters? tasaMaxima, 
-                    QueryParamsFilters? descripcionTipoIVA, 
-                    QueryParamsFilters? fechaCreacionDesde,
-                    QueryParamsFilters? fechaCreacionHasta, 
-                    QueryParamsFilters? estadoActivo
-                    )
+        public async Task<List<TipoIVA>> GetAllAsync(QueryParamsFilters? filters)
         {
             var tiposIVA = new List<TipoIVA>();
 
@@ -51,23 +44,23 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 // Aplicación de filtros
                 //Filtro por TasaMinima
-                var _filtroTasaMinima = tasaMinima?.filtroTasaMinima;
-                if (_filtroTasaMinima.HasValue)
+                var _filtroTasaMinima = filters.filtroTasaMinima ?? -1;
+                if (_filtroTasaMinima >0)
                 {
                     tiposIVA = tiposIVA
-                                    .Where(t => t.tasa >= _filtroTasaMinima.Value)
+                                    .Where(t => t.tasa >= _filtroTasaMinima)
                                     .ToList();
                 }
                 //Filtro por TasaMaxima
-                var _filtroTasaMaxima = tasaMaxima?.filtroTasaMaxima;
-                if (_filtroTasaMaxima.HasValue)
+                var _filtroTasaMaxima = filters.filtroTasaMaxima ?? -1;
+                if (_filtroTasaMaxima >0)
                 {
                     tiposIVA = tiposIVA
-                                    .Where(t => t.tasa <= _filtroTasaMaxima.Value)
+                                    .Where(t => t.tasa <= _filtroTasaMaxima)
                                     .ToList();
                 }
                 //Filtro por DescripcionTipoIVA
-                var _filtroDescripcionTipoIVA = descripcionTipoIVA?.filtroDescripcionTipoIVA ?? "";
+                var _filtroDescripcionTipoIVA = filters.filtroDescripcionTipoIVA ?? "";
                 _filtroDescripcionTipoIVA.AsQueryable();
                 var miQuery = tiposIVA.AsQueryable();
                 if (!string.IsNullOrEmpty(_filtroDescripcionTipoIVA))
@@ -76,19 +69,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por FechaCreacionDesde
-                var _filtroFechaCreacionDesde = fechaCreacionDesde?.filtroFechaCreacionDesde;
+                var _filtroFechaCreacionDesde = filters.filtroFechaCreacionDesde;
                 if (_filtroFechaCreacionDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion >= _filtroFechaCreacionDesde.Value);
                 }
                 // Filtro por FechaCreacionHasta
-                var _filtroFechaCreacionHasta = fechaCreacionHasta?.filtroFechaCreacionHasta;
+                var _filtroFechaCreacionHasta = filters.filtroFechaCreacionHasta;
                 if (_filtroFechaCreacionHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion <= _filtroFechaCreacionHasta.Value);
                 }
                 // Filtro por EstadoActivo
-                var _estadoActivoTipoIVA = estadoActivo?.filtroEstadoActivo;
+                var _estadoActivoTipoIVA = filters.filtroEstadoActivo;
                 if (_estadoActivoTipoIVA.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTipoIVA.Value);

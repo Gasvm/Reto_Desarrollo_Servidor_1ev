@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TipoIVA>>> GetTiposIVA([FromQuery] QueryParamsFilters? filtros)
         {
-            var tipos = await _tipoIVAService.GetAllAsync(filtros, filtros, filtros, filtros, filtros, filtros);
+            var tipos = await _tipoIVAService.GetAllAsync(filtros);
             return Ok(tipos);
         }
 

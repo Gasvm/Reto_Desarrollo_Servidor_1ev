@@ -12,9 +12,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             _pedidoLinRepository = pedidoLinRepository;
         }
 
-        public async Task<List<PedidoLin>> GetAllAsync(QueryParamsFilters? filtroIdPedido = null, QueryParamsFilters? filtroIdProducto = null, QueryParamsFilters? filtroEstadoActivo = null)
+        public async Task<List<PedidoLin>> GetAllAsync(QueryParamsFilters? filters)
         {
-            return await _pedidoLinRepository.GetAllAsync(filtroIdPedido, filtroIdProducto, filtroEstadoActivo);
+            return await _pedidoLinRepository.GetAllAsync(filters);
         }
 
         public async Task<PedidoLin?> GetByIdAsync(int id)

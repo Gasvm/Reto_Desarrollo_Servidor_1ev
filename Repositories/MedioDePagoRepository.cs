@@ -15,7 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todos los medios de pago de la base de datos
-        public async Task<List<MedioDePago>> GetAllAsync(QueryParamsFilters? descripcionMedioDePago, QueryParamsFilters? estadoActivo)
+        public async Task<List<MedioDePago>> GetAllAsync(QueryParamsFilters? filters)
         {
             var mediosDePago = new List<MedioDePago>();
 
@@ -42,7 +42,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 
-                var _descripcionMedioDePago = descripcionMedioDePago.filtroDescripcionMedioDePago ?? "";
+                var _descripcionMedioDePago = filters.filtroDescripcionMedioDePago ?? "";
                 _descripcionMedioDePago.AsQueryable();
                 
                 var miQuery = mediosDePago.AsQueryable();
@@ -53,7 +53,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             m.descripcion.Contains(_descripcionMedioDePago, StringComparison.OrdinalIgnoreCase));                    
                 }
 
-                var _estadoActivoMedioDePago = estadoActivo.filtroEstadoActivo;
+                var _estadoActivoMedioDePago = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoMedioDePago.HasValue)
                 {

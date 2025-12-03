@@ -15,7 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todos los clientes de la base de datos
-        public async Task<List<Cliente>> GetAllAsync(QueryParamsFilters? NombreCliente, QueryParamsFilters? estadoActivo)
+        public async Task<List<Cliente>> GetAllAsync(QueryParamsFilters? filters)
         {
             var clientes = new List<Cliente>();
 
@@ -46,25 +46,16 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 
-                var _nombreCliente = NombreCliente?.filtroNombreCliente ?? "";
-                _nombreCliente.AsQueryable();
-                
+                var _nombreCliente = filters.filtroNombreCliente ?? "";
+                                
                 var miQuery = clientes.AsQueryable();
 
                 if (!string.IsNullOrEmpty(_nombreCliente))
                 {
-                    miQuery = miQuery.Where(c => c.nombre != null &&  c.nombre.Contains(_nombreCliente));
-
-                    // miQuery = miQuery.Where(c => c.nombre != null &&
-                    //                         c.nombre.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
-                    //                         var q = miQuery.ToList();
-                    //                         Console.WriteLine(q);
-                    // Añadido filtro para buscar también por apellidos
-                    // miQuery = miQuery.Where(c => c.apellidos != null &&
-                                            // c.apellidos.Contains(_nombreCliente, StringComparison.OrdinalIgnoreCase));
+                    miQuery = miQuery.Where(c => c.nombre != null &&  c.nombre.Contains(_nombreCliente) || c.apellidos.Contains(_nombreCliente) );
                 }
 
-                var _estadoActivoCliente = estadoActivo?.filtroEstadoActivo;
+                var _estadoActivoCliente = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoCliente.HasValue)
                 {

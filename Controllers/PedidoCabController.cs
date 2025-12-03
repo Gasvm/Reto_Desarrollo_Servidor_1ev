@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PedidoCab>>> GetPedidosCab([FromQuery] QueryParamsFilters? filtros)
         {
-            var pedidos = await _pedidoCabService.GetAllAsync(filtros, filtros, filtros, filtros, filtros);
+            var pedidos = await _pedidoCabService.GetAllAsync(filtros);
             return Ok(pedidos);
         }
 

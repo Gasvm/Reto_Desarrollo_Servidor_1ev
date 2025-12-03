@@ -15,14 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todas las tarjetas de la base de datos
-        public async Task<List<TarjetaCredito>> GetAllAsync(
-                    QueryParamsFilters? idClienteTarjeta, 
-                    QueryParamsFilters? descripcionTarjeta, 
-                    QueryParamsFilters? numeroTarjeta, 
-                    QueryParamsFilters? fechaCaducidadDesde,
-                    QueryParamsFilters? fechaCaducidadHasta, 
-                    QueryParamsFilters? estadoActivo
-                    )
+        public async Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters)
         {
             var tarjetasCredito = new List<TarjetaCredito>();
 
@@ -55,7 +48,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 // Este filtro sería más apropiado aplicarlo a través de la relación Cliente -> TarjetasCredito
 
                 //Filtro por DescripcionTarjeta
-                var _filtroDescripcionTarjeta = descripcionTarjeta?.filtroDescripcionTarjeta ?? "";
+                var _filtroDescripcionTarjeta = filters.filtroDescripcionTarjeta ?? "";
                 _filtroDescripcionTarjeta.AsQueryable();
                 var miQuery = tarjetasCredito.AsQueryable();
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
@@ -64,26 +57,26 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                             t.descripcion.ToString().Contains(_filtroDescripcionTarjeta, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por NumeroTarjeta
-                var _filtroNumeroTarjeta = numeroTarjeta?.filtroNumeroTarjeta ?? "";
+                var _filtroNumeroTarjeta = filters.filtroNumeroTarjeta ?? "";
                 if (!string.IsNullOrEmpty(_filtroNumeroTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.numeroTarjeta != null &&
                                             t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta, StringComparison.OrdinalIgnoreCase));                    
                 }
                 // Filtro por FechaCaducidadDesde
-                var _filtroFechaCaducidadDesde = fechaCaducidadDesde?.filtroFechaCaducidadDesde;
+                var _filtroFechaCaducidadDesde = filters.filtroFechaCaducidadDesde;
                 if (_filtroFechaCaducidadDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad >= _filtroFechaCaducidadDesde.Value);
                 }
                 // Filtro por FechaCaducidadHasta
-                var _filtroFechaCaducidadHasta = fechaCaducidadHasta?.filtroFechaCaducidadHasta;
+                var _filtroFechaCaducidadHasta = filters.filtroFechaCaducidadHasta;
                 if (_filtroFechaCaducidadHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad <= _filtroFechaCaducidadHasta.Value);
                 }
                 // Filtro por EstadoActivo
-                var _estadoActivoTarjeta = estadoActivo?.filtroEstadoActivo;
+                var _estadoActivoTarjeta = filters.filtroEstadoActivo;
                 if (_estadoActivoTarjeta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTarjeta.Value);

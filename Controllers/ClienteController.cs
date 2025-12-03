@@ -18,41 +18,12 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             _clienteService = clienteService;
         }
 
-        /* OPCIÓN 1 - FILTRAMOS A NIVEL DE CONTROLLER - NO ES BUENA PRÁCTICA */
-        /*
-        [HttpGet]
-        public async Task<ActionResult<List<Bebida>>> GetBebidas([FromQuery] QueryParamsFiltters? nombreProducto)
-        {
-            var _nombreProducto = nombreProducto.filtroNombreProducto ?? "";
-            //_nombreProducto.AsQueryable();
-            var bebidas = await _clienteService.GetAllAsync();
-
-            var query = bebidas.AsQueryable();
-
-            if (!string.IsNullOrEmpty(_nombreProducto))
-            {
-                query = query.Where(b => b.Nombre != null &&
-                                        b.Nombre.Contains(_nombreProducto, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (query.Any())
-            {
-                bebidas = query.ToList();
-            }
-
-            return Ok(bebidas);
-        }
-        */
-
-        /* OPCIÓN 2 - PASAMOS EL OBJETO A LA CAPA SERVICE - MEJOR OPCIÓN */
 
         [HttpGet]
-        public async Task<ActionResult<List<Cliente>>> GetClientes([FromQuery] QueryParamsFilters? nombreCliente = null, QueryParamsFilters? estadoActivo = null)
+        public async Task<ActionResult<List<Cliente>>> GetClientes([FromQuery] QueryParamsFilters? filters)
         {
-            var _nombreCliente = nombreCliente ?? null;
-            var _estadoActivo = estadoActivo ?? null;
-            //_nombreProducto.AsQueryable();
-            var clientes = await _clienteService.GetAllAsync(_nombreCliente, _estadoActivo);
+            
+            var clientes = await _clienteService.GetAllAsync(filters);
             
             return Ok(clientes);
         }

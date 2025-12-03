@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Producto>>> GetProductos([FromQuery] QueryParamsFilters? filtros)
         {
-            var productos = await _productoService.GetAllAsync(filtros, filtros, filtros, filtros, filtros);
+            var productos = await _productoService.GetAllAsync(filtros);
             return Ok(productos);
         }
 

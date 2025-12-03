@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TarjetaCredito>>> GetTarjetasCredito([FromQuery] QueryParamsFilters? filtros)
         {
-            var tarjetas = await _tarjetaCreditoService.GetAllAsync(filtros, filtros, filtros, filtros, filtros, filtros);
+            var tarjetas = await _tarjetaCreditoService.GetAllAsync(filtros);
             return Ok(tarjetas);
         }
 

@@ -18,7 +18,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PedidoLin>>> GetPedidosLin([FromQuery] QueryParamsFilters? filtros)
         {
-            var lineas = await _pedidoLinService.GetAllAsync(filtros, filtros, filtros);
+            var lineas = await _pedidoLinService.GetAllAsync(filtros);
             return Ok(lineas);
         }
 

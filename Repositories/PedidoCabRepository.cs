@@ -15,13 +15,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         
         //Método asíncrono para obtener todos los medios de pago de la base de datos
-        public async Task<List<PedidoCab>> GetAllAsync(
-                    QueryParamsFilters? filtroIdCliente, 
-                    QueryParamsFilters? filtroIdMedioPago, 
-                    QueryParamsFilters? filtroFechaPedidoDesde, 
-                    QueryParamsFilters? filtroFechaPedidoHasta, 
-                    QueryParamsFilters? filtroEstadoActivo
-                    )
+        public async Task<List<PedidoCab>> GetAllAsync(QueryParamsFilters? filters)
         {
             var pedidosCab = new List<PedidoCab>();
 
@@ -53,35 +47,35 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 var miQuery = pedidosCab.AsQueryable();
                 
                 // Filtro por IdCliente
-                var _filtroIdCliente = filtroIdCliente?.filtroIdCliente;
+                var _filtroIdCliente = filters.filtroIdCliente;
                 if (_filtroIdCliente.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente.Value);                    
                 }
 
                 // Filtro por IdMedioPago
-                var _filtroIdMedioPago = filtroIdMedioPago?.filtroIdMedioPago;
+                var _filtroIdMedioPago = filters.filtroIdMedioPago;
                 if (_filtroIdMedioPago.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago.Value);                    
                 }
 
                 // Filtro por FechaPedidoDesde
-                var _filtroFechaPedidoDesde = filtroFechaPedidoDesde?.filtroFechaPedidoDesde;
+                var _filtroFechaPedidoDesde = filters.filtroFechaPedidoDesde;
                 if (_filtroFechaPedidoDesde.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido >= _filtroFechaPedidoDesde.Value);
                 }
 
                 // Filtro por FechaPedidoHasta
-                var _filtroFechaPedidoHasta = filtroFechaPedidoHasta?.filtroFechaPedidoHasta;
+                var _filtroFechaPedidoHasta = filters.filtroFechaPedidoHasta;
                 if (_filtroFechaPedidoHasta.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido <= _filtroFechaPedidoHasta.Value);
                 }
 
                 // Filtro por EstadoActivo
-                var _estadoActivoPedidoCab = filtroEstadoActivo?.filtroEstadoActivo;
+                var _estadoActivoPedidoCab = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoPedidoCab.HasValue)
                 {
