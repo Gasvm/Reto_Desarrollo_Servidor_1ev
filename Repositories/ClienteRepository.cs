@@ -53,6 +53,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_nombreCliente))
                 {
                     miQuery = miQuery.Where(c => c.nombre != null &&  c.nombre.Contains(_nombreCliente) || c.apellidos.Contains(_nombreCliente) );
+                    clientes = miQuery.ToList();
                 }
 
                 var _estadoActivoCliente = filters.filtroEstadoActivo;
@@ -60,12 +61,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoCliente.HasValue)
                 {
                     miQuery = miQuery.Where(c => c.activo == _estadoActivoCliente.Value);
-                }
-
-                if (miQuery.Any())
-                {
                     clientes = miQuery.ToList();
                 }
+
+                // if (miQuery.Any())
+                // {
+                //     clientes = miQuery.ToList();
+                    
+                // }
                 
             }
 

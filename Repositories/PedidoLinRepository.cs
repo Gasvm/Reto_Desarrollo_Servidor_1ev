@@ -56,6 +56,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdPedido >0)
                 {
                     miQuery = miQuery.Where(p => p.idPedido == _filtroIdPedido);
+                    pedidosLin = miQuery.ToList();
                 }
 
                 // Filtro por filtroIdProducto
@@ -64,6 +65,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdProducto > 0)
                 {
                     miQuery = miQuery.Where(p => p.idProducto == _filtroIdProducto);
+                    pedidosLin = miQuery.ToList();
                 }
 
                 // Filtro por EstadoActivo
@@ -72,12 +74,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoPedidoLin.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoLin.Value);
-                }
-
-                if (miQuery.Any())
-                {
                     pedidosLin = miQuery.ToList();
                 }
+
+                // if (miQuery.Any())
+                // {
+                //     pedidosLin = miQuery.ToList();
+                // }
                 
             }
 

@@ -51,6 +51,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdCliente >0)
                 {
                     miQuery = miQuery.Where(t => t.idCliente == _filtroIdCliente);
+                    tarjetasCredito = miQuery.ToList();
                 }   
                 
 
@@ -61,37 +62,42 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
-                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta, StringComparison.OrdinalIgnoreCase));                    
+                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta, StringComparison.OrdinalIgnoreCase));
+                    tarjetasCredito = miQuery.ToList();                    
                 }
                 // Filtro por NumeroTarjeta
                 var _filtroNumeroTarjeta = filters.filtroNumeroTarjeta ?? "";
                 if (!string.IsNullOrEmpty(_filtroNumeroTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.numeroTarjeta != null &&
-                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta, StringComparison.OrdinalIgnoreCase));                    
+                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta, StringComparison.OrdinalIgnoreCase));
+                    tarjetasCredito = miQuery.ToList();                    
                 }
                 // Filtro por FechaCaducidadDesde
                 var _filtroFechaCaducidadDesde = filters.filtroFechaCaducidadDesde;
                 if (_filtroFechaCaducidadDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad >= _filtroFechaCaducidadDesde.Value);
+                    tarjetasCredito = miQuery.ToList();
                 }
                 // Filtro por FechaCaducidadHasta
                 var _filtroFechaCaducidadHasta = filters.filtroFechaCaducidadHasta;
                 if (_filtroFechaCaducidadHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad <= _filtroFechaCaducidadHasta.Value);
+                    tarjetasCredito = miQuery.ToList();
                 }
                 // Filtro por EstadoActivo
                 var _estadoActivoTarjeta = filters.filtroEstadoActivo;
                 if (_estadoActivoTarjeta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTarjeta.Value);
-                }
-                if (miQuery.Any())
-                {
                     tarjetasCredito = miQuery.ToList();
-                }            
+                }
+                // if (miQuery.Any())
+                // {
+                //     tarjetasCredito = miQuery.ToList();
+                // }            
                 
             }
 

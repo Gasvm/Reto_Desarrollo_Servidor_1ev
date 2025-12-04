@@ -53,19 +53,22 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_filtroDescripcionProducto))
                 {
                     miQuery = miQuery.Where(p => p.descripcion != null &&
-                                            p.descripcion.ToString().Contains(_filtroDescripcionProducto, StringComparison.OrdinalIgnoreCase));                    
+                                            p.descripcion.ToString().Contains(_filtroDescripcionProducto, StringComparison.OrdinalIgnoreCase));
+                    productos = miQuery.ToList();                    
                 }
                 // Filtro por PrecioMinimo
                 var _filtroPrecioMinimo = filters.filtroPrecioMinimo;
                 if (_filtroPrecioMinimo.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.precio >= _filtroPrecioMinimo.Value);
+                    productos = miQuery.ToList();
                 }
                 // Filtro por PrecioMaximo
                 var _filtroPrecioMaximo = filters.filtroPrecioMaximo;
                 if (_filtroPrecioMaximo.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.precio <= _filtroPrecioMaximo.Value);
+                    productos = miQuery.ToList();
                 }
                 // Filtro por IdTipoIVA
                 var _filtroIdTipoIVA = filters.filtroIdTipoIVA;
@@ -73,6 +76,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdTipoIVA.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.idTipoIVA == _filtroIdTipoIVA.Value);
+                    productos = miQuery.ToList();
                 }
                 
                 // Filtro por EstadoActivo
@@ -81,12 +85,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoMedioDePago.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.activo == _estadoActivoMedioDePago.Value);
-                }
-
-                if (miQuery.Any())
-                {
                     productos = miQuery.ToList();
                 }
+
+                // if (miQuery.Any())
+                // {
+                //     productos = miQuery.ToList();
+                // }
                 
             }
 

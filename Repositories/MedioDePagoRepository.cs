@@ -50,7 +50,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_descripcionMedioDePago))
                 {
                     miQuery = miQuery.Where(m => m.descripcion != null &&
-                                            m.descripcion.Contains(_descripcionMedioDePago));                    
+                                            m.descripcion.Contains(_descripcionMedioDePago));
+                    mediosDePago = miQuery.ToList();
                 }
 
                 var _estadoActivoMedioDePago = filters.filtroEstadoActivo;
@@ -58,12 +59,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoMedioDePago.HasValue)
                 {
                     miQuery = miQuery.Where(m => m.activo == _estadoActivoMedioDePago.Value);
-                }
-
-                if (miQuery.Any())
-                {
                     mediosDePago = miQuery.ToList();
                 }
+
+                // if (miQuery.Any())
+                // {
+                //     mediosDePago = miQuery.ToList();
+                // }
                 
             }
 

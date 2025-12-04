@@ -50,14 +50,16 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 var _filtroIdCliente = filters.filtroIdCliente ?? -1;
                 if (_filtroIdCliente > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente);                    
+                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente);
+                    pedidosCab = miQuery.ToList();                    
                 }
 
                 // Filtro por IdMedioPago
                 var _filtroIdMedioPago = filters.filtroIdMedioPago ?? -1;
                 if (_filtroIdMedioPago > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago);                    
+                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago);
+                    pedidosCab = miQuery.ToList();                    
                 }
 
                 // Filtro por FechaPedidoDesde
@@ -65,6 +67,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroFechaPedidoDesde.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido >= _filtroFechaPedidoDesde.Value);
+                    pedidosCab = miQuery.ToList();
                 }
 
                 // Filtro por FechaPedidoHasta
@@ -72,6 +75,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroFechaPedidoHasta.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido <= _filtroFechaPedidoHasta.Value);
+                    pedidosCab = miQuery.ToList();
                 }
 
                 // Filtro por EstadoActivo
@@ -80,12 +84,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoPedidoCab.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoCab.Value);
-                }
-
-                if (miQuery.Any())
-                {
                     pedidosCab = miQuery.ToList();
                 }
+
+                // if (miQuery.Any())
+                // {
+                //     pedidosCab = miQuery.ToList();
+                // }
                 
             }
 
