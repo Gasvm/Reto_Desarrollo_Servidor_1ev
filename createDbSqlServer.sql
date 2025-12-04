@@ -13,8 +13,8 @@ USE SistemaPedidosDB;
 -- CREAR TABLAS (Orden: Master -> Detail)
 -- ================================
 
--- Tabla tbTipoIVA (Tabla maestra - sin dependencias)
-CREATE TABLE tbTipoIVA (
+-- Tabla tbTiposIVA (Tabla maestra - sin dependencias)
+CREATE TABLE tbTiposIVA (
     idTipoIVA INT IDENTITY(1,1) PRIMARY KEY,
     descripcion NVARCHAR(100) NOT NULL,
     tasa DECIMAL(5,2) NOT NULL CHECK (tasa >= 0),
@@ -42,8 +42,8 @@ CREATE TABLE tbMediosDePago (
     activo BIT DEFAULT 1
 );
 
--- Tabla tbTarjetaCredito (Detalle de Cliente)
-CREATE TABLE tbTarjetaCredito (
+-- Tabla tbTarjetasCredito (Detalle de Cliente)
+CREATE TABLE tbTarjetasCredito (
     idTarjetaCredito INT IDENTITY(1,1) PRIMARY KEY,
     descripcion NVARCHAR(100) NOT NULL,
     numeroTarjeta NVARCHAR(19) NOT NULL,
@@ -62,11 +62,11 @@ CREATE TABLE tbProductos (
     idTipoIVA INT NOT NULL,
     fechaCreacion DATETIME DEFAULT GETDATE(),
     activo BIT DEFAULT 1,
-    FOREIGN KEY (idTipoIVA) REFERENCES tbTipoIVA(idTipoIVA)
+    FOREIGN KEY (idTipoIVA) REFERENCES tbTiposIVA(idTipoIVA)
 );
 
--- Tabla tbPedidoCab (Cabecera de Pedido)
-CREATE TABLE tbPedidoCab (
+-- Tabla tbPedidosCab (Cabecera de Pedido)
+CREATE TABLE tbPedidosCab (
     idPedido INT IDENTITY(1,1) PRIMARY KEY,
     idCliente INT NOT NULL,
     fechaPedido DATETIME DEFAULT GETDATE(),
@@ -75,11 +75,11 @@ CREATE TABLE tbPedidoCab (
     activo BIT DEFAULT 1,
     FOREIGN KEY (idCliente) REFERENCES tbClientes(idCliente),
     FOREIGN KEY (idMedioPago) REFERENCES tbMediosDePago(idMedioDePago),
-    FOREIGN KEY (idTarjetaCredito) REFERENCES tbTarjetaCredito(idTarjetaCredito)
+    FOREIGN KEY (idTarjetaCredito) REFERENCES tbTarjetasCredito(idTarjetaCredito)
 );
 
--- Tabla tbPedidoLin (Línea de Pedido - Detalle)
-CREATE TABLE tbPedidoLin (
+-- Tabla tbPedidosLin (Línea de Pedido - Detalle)
+CREATE TABLE tbPedidosLin (
     idLineaPedido INT IDENTITY(1,1) PRIMARY KEY,
     idPedido INT NOT NULL,
     idProducto INT NOT NULL,
@@ -89,9 +89,9 @@ CREATE TABLE tbPedidoLin (
     cantidad INT NOT NULL CHECK (cantidad > 0),
     totalLinea DECIMAL(10,2),
     activo BIT DEFAULT 1,
-    FOREIGN KEY (idPedido) REFERENCES tbPedidoCab(idPedido) ON DELETE CASCADE,
+    FOREIGN KEY (idPedido) REFERENCES tbPedidosCab(idPedido) ON DELETE CASCADE,
     FOREIGN KEY (idProducto) REFERENCES tbProductos(idProducto),
-    FOREIGN KEY (idTipoIVA) REFERENCES tbTipoIVA(idTipoIVA)
+    FOREIGN KEY (idTipoIVA) REFERENCES tbTiposIVA(idTipoIVA)
 );
 
 -- ================================
@@ -99,7 +99,7 @@ CREATE TABLE tbPedidoLin (
 -- ================================
 
 -- Insertar Tipos de IVA (primero, ya que otros dependen)
-INSERT INTO tbTipoIVA (descripcion, tasa, activo)
+INSERT INTO tbTiposIVA (descripcion, tasa, activo)
 VALUES 
 ('IVA General (21%)', 21.00, 1),
 ('IVA Reducido (10%)', 10.00, 1),
@@ -125,7 +125,7 @@ VALUES
 ('Carlos', 'Ruiz Navarro', 'carlos.ruiz@email.com', 'hash_password_345', '600567890', GETDATE(), 1);
 
 -- Insertar Tarjetas de Crédito
-INSERT INTO tbTarjetaCredito (descripcion, numeroTarjeta, fechaCaducidad, idCliente, fechaCreacion, activo)
+INSERT INTO tbTarjetasCredito (descripcion, numeroTarjeta, fechaCaducidad, idCliente, fechaCreacion, activo)
 VALUES 
 ('Visa Gold', '4532123456789012', '2026-12-31', 1, GETDATE(), 1),
 ('MasterCard', '5425233430109903', '2027-06-30', 2, GETDATE(), 1),
@@ -151,7 +151,7 @@ VALUES
 ('Memoria RAM 16GB', 79.99, 1, GETDATE(), 1);
 
 -- Insertar Pedidos (Cabeceras)
-INSERT INTO tbPedidoCab (idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo)
+INSERT INTO tbPedidosCab (idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo)
 VALUES 
 (1, '2024-11-15 10:30:00', 1, 1, 1),
 (2, '2024-11-16 14:45:00', 1, 2, 1),
@@ -162,7 +162,7 @@ VALUES
 (2, '2024-11-21 15:45:00', 4, NULL, 1);
 
 -- Insertar Líneas de Pedido
-INSERT INTO tbPedidoLin (idPedido, idProducto, precio, descuento, idTipoIVA, cantidad, totalLinea, activo)
+INSERT INTO tbPedidosLin (idPedido, idProducto, precio, descuento, idTipoIVA, cantidad, totalLinea, activo)
 VALUES 
 -- Pedido 1 (Juan)
 (1, 1, 799.99, 5.00, 1, 1, 759.99, 1),
@@ -201,13 +201,13 @@ VALUES
 -- ================================
 
 -- Índice para búsquedas por cliente
-CREATE INDEX idx_PedidoCab_Cliente ON tbPedidoCab(idCliente);
+CREATE INDEX idx_PedidoCab_Cliente ON tbPedidosCab(idCliente);
 
 -- Índice para búsquedas por producto
-CREATE INDEX idx_PedidoLin_Producto ON tbPedidoLin(idProducto);
+CREATE INDEX idx_PedidoLin_Producto ON tbPedidosLin(idProducto);
 
 -- Índice para búsquedas por pedido
-CREATE INDEX idx_PedidoLin_Pedido ON tbPedidoLin(idPedido);
+CREATE INDEX idx_PedidoLin_Pedido ON tbPedidosLin(idPedido);
 
 -- Índice para búsquedas por tipo IVA
 CREATE INDEX idx_Productos_TipoIVA ON tbProductos(idTipoIVA);
@@ -228,20 +228,20 @@ ORDER BY nombre;
 -- Ver todos los productos con su tipo de IVA
 SELECT p.idProducto, p.descripcion, p.precio, t.descripcion AS TipoIVA, t.tasa AS TasaIVA
 FROM tbProductos p
-INNER JOIN tbTipoIVA t ON p.idTipoIVA = t.idTipoIVA
+INNER JOIN tbTiposIVA t ON p.idTipoIVA = t.idTipoIVA
 WHERE p.activo = 1
 ORDER BY p.descripcion;
 
 -- Ver todos los pedidos con información del cliente
 SELECT pc.idPedido, pc.fechaPedido, c.nombre, c.apellidos, COUNT(pl.idLineaPedido) AS NumProductos, SUM(pl.totalLinea) AS TotalPedido
-FROM tbPedidoCab pc
+FROM tbPedidosCab pc
 INNER JOIN tbClientes c ON pc.idCliente = c.idCliente
-LEFT JOIN tbPedidoLin pl ON pc.idPedido = pl.idPedido
+LEFT JOIN tbPedidosLin pl ON pc.idPedido = pl.idPedido
 WHERE pc.activo = 1
 GROUP BY pc.idPedido, pc.fechaPedido, c.nombre, c.apellidos
 ORDER BY pc.fechaPedido DESC;
 
 -- Ver tarjetas de crédito de un cliente
 SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad
-FROM tbTarjetaCredito
+FROM tbTarjetasCredito
 WHERE idCliente = 1 AND activo = 1;

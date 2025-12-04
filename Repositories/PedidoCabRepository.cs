@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito FROM tbPedidoCab";
+                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito FROM tbPedidosCab";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -102,7 +102,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo FROM tbPedidoCab WHERE idPedido = @Id";
+                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo FROM tbPedidosCab WHERE idPedido = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -136,7 +136,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbPedidoCab (idCliente, fechaPedido, " +
+                string query = "INSERT INTO tbPedidosCab (idCliente, fechaPedido, " +
                                 "idMedioPago, idTarjetaCredito, activo) " +
                                "VALUES (@IdCliente, @FechaPedido, @IdMedioPago, " +
                                "@IdTarjetaCredito, @Activo,)";
@@ -161,7 +161,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "UPDATE tbPedidoCab SET idCliente = @IdCliente, " +
+                string query = "UPDATE tbPedidosCab SET idCliente = @IdCliente, " +
                                 "fechaPedido = @FechaPedido, idMedioPago = @IdMedioPago, " +
                                 "idTarjetaCredito = @IdTarjetaCredito, activo = @Activo " +
                                 "WHERE idMedioDePago = @Id";
@@ -187,7 +187,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "UPDATE tbPedidoCab SET activo = 0 WHERE idPedido = @Id";
+                string query = "UPDATE tbPedidosCab SET activo = 0 WHERE idPedido = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);

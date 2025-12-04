@@ -24,7 +24,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 await connection.OpenAsync();
                 
                 string query = "SELECT idLineaPedido, idPedido, idProducto, precio, descuento, " + 
-                "idTipoIVA, cantidad, totalLinea FROM tbPedidoLin";
+                "idTipoIVA, cantidad, totalLinea FROM tbPedidosLin";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -96,7 +96,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
                 string query = "SELECT idPedido, idProducto, precio, " + 
                 "descuento, idTipoIVA, cantidad, totalLinea, activo "+
-                "FROM tbPedidoLin WHERE idLineaPedido = @Id";
+                "FROM tbPedidosLin WHERE idLineaPedido = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -133,7 +133,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbPedidoLin (idPedido, idProducto, " +
+                string query = "INSERT INTO tbPedidosLin (idPedido, idProducto, " +
                                 "precio, descuento, idTipoIVA, cantidad, totalLinea, activo) " +
                                "VALUES (@IdPedido, @IdProducto, @Precio, " +
                                "@Descuento, @IdTipoIVA, @Cantidad, @TotalLinea, @Activo)";
@@ -161,7 +161,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "UPDATE tbPedidoLin SET idPedido = @IdPedido, " +
+                string query = "UPDATE tbPedidosLin SET idPedido = @IdPedido, " +
                                 "idProducto = @IdProducto, precio = @Precio, " +
                                 "descuento = @Descuento, idTipoIVA = @IdTipoIVA, " +
                                 "cantidad = @Cantidad, totalLinea = @TotalLinea, " +
@@ -193,7 +193,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "UPDATE tbPedidoLin SET activo = 0 WHERE idLineaPedido = @Id";
+                string query = "UPDATE tbPedidosLin SET activo = 0 WHERE idLineaPedido = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
