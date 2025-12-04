@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>More than Brows - Gestión</title>
+    <link rel="stylesheet" href="./css/styles.css">
+       
+    
+</head>
+<body>
+    
+    <header>
+        <div class="container">
+            <h1>Sistema de Gestión</h1>
+            <p class="subtitle">More than brows - Panel Administrativo</p>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        
+        <section id="sec-productos" class="section active-section">
+            <div class="header-section">
+                <h2>Nuestros Productos</h2>
+                <p>Catálogo actual disponible en el sistema.</p>
+            </div>
+            
+            <div class="form-group search-bar">
+                <input type="search" id="searchProductos" placeholder="Buscar por descripción..." oninput="filtrarProductos()">
+            </div>
+
+            <div id="grid-productos" class="grid-system">
+                <p class="loading-text">Cargando productos...</p>
+            </div>
+        </section>
+
+        <section id="sec-clientes" class="section" style="display: none;">
+            <div class="header-section">
+                <h2>Gestión de Clientes</h2>
+                <p>Base de datos de clientes registrados.</p>
+            </div>
+
+            <div class="component-card">
+                <h3>Registrar Nuevo Cliente</h3>
+                <form id="form-cliente">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Apellidos</label>
+                        <input type="text" id="apellidos" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" id="telefono">
+                    </div>
+                    <div class="button-grid">
+                        <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="lista-clientes" class="list-container">
+                </div>
+        </section>
+
+    </div>
+
+    <nav class="nav-bar">
+        <ul class="nav-bar__list">
+            <li class="nav-bar__item nav-bar__item--active" onclick="mostrarSeccion('sec-productos', this)">
+                <div class="nav-bar__link">
+                    <svg class="nav-bar__icon" viewBox="0 0 24 24" stroke="currentColor">
+                        <rect x="3" y="4" width="18" height="16" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span class="sr-only">Productos</span>
+                </div>
+            </li>
+            <li class="nav-bar__item" onclick="mostrarSeccion('sec-clientes', this)">
+                <div class="nav-bar__link">
+                    <svg class="nav-bar__icon" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span class="sr-only">Clientes</span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <script src="./js/app.js"></script>
+</body>
+</html>
