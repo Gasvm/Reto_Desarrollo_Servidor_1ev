@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public PedidoLinRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -36,11 +36,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idLineaPedido = reader.GetInt32(0),
                                 idPedido = reader.GetInt32(1),
                                 idProducto = reader.GetInt32(2),
-                                precio = reader.GetDouble(3),
-                                descuento = reader.GetDouble(4),
+                                precio = reader.GetDecimal(3),
+                                descuento = reader.GetDecimal(4),
                                 idTipoIVA = reader.GetInt32(5),
                                 cantidad = reader.GetInt32(6),
-                                totalLinea = reader.GetDouble(7)
+                                totalLinea = reader.GetDecimal(7)
                             };
 
                             pedidosLin.Add(pedidoLin);
@@ -110,11 +110,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idLineaPedido = id,
                                 idPedido = reader.GetInt32(0),
                                 idProducto = reader.GetInt32(1),
-                                precio = reader.GetDouble(2),
-                                descuento = reader.GetDouble(3),
+                                precio = reader.GetDecimal(2),
+                                descuento = reader.GetDecimal(3),
                                 idTipoIVA = reader.GetInt32(4),
                                 cantidad = reader.GetInt32(5),
-                                totalLinea = reader.GetDouble(6),
+                                totalLinea = reader.GetDecimal(6),
                                 activo = reader.GetBoolean(7)
                             };
                         }
