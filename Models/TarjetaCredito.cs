@@ -6,6 +6,7 @@ public class TarjetaCredito {
     public string? descripcion {get;set;}
     public string? numeroTarjeta {get;set;}
     public DateTime? fechaCaducidad {get;set;}
+    public int? idCliente {get;set;}
     public DateTime? fechaCreacion {get;set;}
     public bool activo {get;set;}
 
@@ -15,12 +16,13 @@ public class TarjetaCredito {
         activo = true;
     }
 
-    public TarjetaCredito(int _idTarjetaCredito, string _descripcion, string _numeroTarjeta, DateTime? _fechaCaducidad, DateTime _fechaCreacion )
+    public TarjetaCredito(int _idTarjetaCredito, string _descripcion, string _numeroTarjeta, DateTime? _fechaCaducidad, int _idCliente, DateTime _fechaCreacion )
     {
         idTarjetaCredito = _idTarjetaCredito;
         descripcion = _descripcion;
         numeroTarjeta = _numeroTarjeta;
         fechaCaducidad = _fechaCaducidad;
+        idCliente = _idCliente;
         fechaCreacion = _fechaCreacion;
         activo = true;
     }

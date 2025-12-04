@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public TarjetaCreditoRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad, fechaCreacion FROM tbTarjetasCredito";
+                string query = "SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad, idCliente, fechaCreacion FROM tbTarjetasCredito";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -36,7 +36,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 descripcion = reader.GetString(1),
                                 numeroTarjeta = reader.GetString(2),
                                 fechaCaducidad = reader.GetDateTime(3),
-                                fechaCreacion = reader.GetDateTime(4)
+                                idCliente = reader.GetInt32(4),
+                                fechaCreacion = reader.GetDateTime(5)
                             };
 
                             tarjetasCredito.Add(tarjetaCredito);
@@ -44,13 +45,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 // Aplicación de filtros
-                // Nota: El filtro idClienteTarjeta no se aplica porque TarjetaCredito no tiene idCliente
-                // Este filtro sería más apropiado aplicarlo a través de la relación Cliente -> TarjetasCredito
+                var miQuery = tarjetasCredito.AsQueryable();
+                //Filtro por idCliente
+                var _filtroIdCliente = filters.filtroIdClienteTarjeta ?? -1;
+                if (_filtroIdCliente >0)
+                {
+                    miQuery = miQuery.Where(t => t.idCliente == _filtroIdCliente);
+                }   
+                
 
                 //Filtro por DescripcionTarjeta
                 var _filtroDescripcionTarjeta = filters.filtroDescripcionTarjeta ?? "";
-                _filtroDescripcionTarjeta.AsQueryable();
-                var miQuery = tarjetasCredito.AsQueryable();
+                
+                
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
@@ -101,7 +108,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad, fechaCreacion, activo FROM tbTarjetasCredito WHERE idTarjetaCredito = @Id";
+                string query = "SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad, idCliente, fechaCreacion, activo FROM tbTarjetasCredito WHERE idTarjetaCredito = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -116,8 +123,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 descripcion = reader.GetString(0),
                                 numeroTarjeta = reader.GetString(1),
                                 fechaCaducidad = reader.GetDateTime(2),
-                                fechaCreacion = reader.GetDateTime(3),
-                                activo = reader.GetBoolean(4)
+                                idCliente = reader.GetInt32(3),
+                                fechaCreacion = reader.GetDateTime(4),
+                                activo = reader.GetBoolean(5)
                             };
                             
                         }
@@ -137,14 +145,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 await connection.OpenAsync();
 
                 string query = "INSERT INTO tbTarjetasCredito (descripcion, numeroTarjeta, " +
-                                "fechaCaducidad, fechaCreacion, activo) " +
+                                "fechaCaducidad, idCliente, fechaCreacion, activo) " +
                                "VALUES (@Descripcion, @NumeroTarjeta, @FechaCaducidad, " +
-                               "@FechaCreacion, @Activo,)";
+                               "@IdCliente, @FechaCreacion, @Activo,)";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@NumeroTarjeta", tarjetaCredito.numeroTarjeta ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCaducidad", tarjetaCredito.fechaCaducidad ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@IdCliente", tarjetaCredito.idCliente ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tarjetaCredito.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tarjetaCredito.activo);
                     
@@ -163,13 +172,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
                 string query = "UPDATE tbTarjetasCredito SET descripcion = @Descripcion, " +
                                 "numeroTarjeta = @NumeroTarjeta, fechaCaducidad = @FechaCaducidad, " +
-                                "fechaCreacion = @FechaCreacion, activo = @Activo " +
+                                "idCliente = @IdCliente, fechaCreacion = @FechaCreacion, activo = @Activo " +
                                 "WHERE idTarjetaCredito = @Id";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@NumeroTarjeta", tarjetaCredito.numeroTarjeta ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCaducidad", tarjetaCredito.fechaCaducidad ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@IdCliente", tarjetaCredito.idCliente ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tarjetaCredito.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tarjetaCredito.activo);
                     command.Parameters.AddWithValue("@Id", tarjetaCredito.idTarjetaCredito);
