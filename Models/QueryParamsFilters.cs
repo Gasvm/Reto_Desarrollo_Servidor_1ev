@@ -26,8 +26,8 @@ public class QueryParamsFilters {
 
     //Filtros específicos para productos
     public string? filtroDescripcionProducto { get; set; }
-    public double? filtroPrecioMinimo { get; set; }
-    public double? filtroPrecioMaximo { get; set; }
+    public decimal? filtroPrecioMinimo { get; set; }
+    public decimal? filtroPrecioMaximo { get; set; }
     public int? filtroIdTipoIVA { get; set; }
 
     //Filtros específicos para Tarjetas de Crédito

@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public ProductoRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -34,7 +34,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             {
                                 idProducto = reader.GetInt32(0),
                                 descripcion = reader.GetString(1),
-                                precio = reader.GetDouble(2),
+                                precio = reader.GetDecimal(2),
                                 idTipoIVA = reader.GetInt32(3),
                                 fechaCreacion = reader.GetDateTime(4)
                             };
@@ -116,7 +116,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             {
                                 idProducto = id,
                                 descripcion = reader.GetString(0),
-                                precio = reader.GetDouble(1),
+                                precio = reader.GetDecimal(1),
                                 idTipoIVA = reader.GetInt32(2),
                                 fechaCreacion = reader.GetDateTime(3),
                                 activo = reader.GetBoolean(4)
