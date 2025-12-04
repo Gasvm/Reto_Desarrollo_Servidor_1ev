@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public TipoIVARepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -34,7 +34,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             {
                                 idTipoIVA = reader.GetInt32(0),
                                 descripcion = reader.GetString(1),
-                                tasa = reader.GetDouble(2),
+                                tasa = reader.GetDecimal(2),
                                 fechaCreacion = reader.GetDateTime(3)
                             };
 
@@ -66,30 +66,34 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_filtroDescripcionTipoIVA))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
-                                            t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA, StringComparison.OrdinalIgnoreCase));                    
+                                            t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA, StringComparison.OrdinalIgnoreCase));
+                    tiposIVA = miQuery.ToList();                    
                 }
                 // Filtro por FechaCreacionDesde
                 var _filtroFechaCreacionDesde = filters.filtroFechaCreacionDesde;
                 if (_filtroFechaCreacionDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion >= _filtroFechaCreacionDesde.Value);
+                    tiposIVA = miQuery.ToList();  
                 }
                 // Filtro por FechaCreacionHasta
                 var _filtroFechaCreacionHasta = filters.filtroFechaCreacionHasta;
                 if (_filtroFechaCreacionHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion <= _filtroFechaCreacionHasta.Value);
+                    tiposIVA = miQuery.ToList();  
                 }
                 // Filtro por EstadoActivo
                 var _estadoActivoTipoIVA = filters.filtroEstadoActivo;
                 if (_estadoActivoTipoIVA.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTipoIVA.Value);
+                    tiposIVA = miQuery.ToList();  
                 }
-                if (miQuery.Any())
-                {
-                    tiposIVA = miQuery.ToList();
-                }            
+                // if (miQuery.Any())
+                // {
+                //     tiposIVA = miQuery.ToList();
+                // }            
                 
             }
 
@@ -119,7 +123,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             {
                                 idTipoIVA = id,
                                 descripcion = reader.GetString(0),
-                                tasa = reader.GetDouble(1),
+                                tasa = reader.GetDecimal(1),
                                 fechaCreacion = reader.GetDateTime(2),
                                 activo = reader.GetBoolean(3)
                             };

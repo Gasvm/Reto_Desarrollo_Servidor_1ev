@@ -39,8 +39,8 @@ public class QueryParamsFilters {
 
 
     //Filtros específicos para tipos de IVA
-    public double? filtroTasaMinima { get; set; }
-    public double? filtroTasaMaxima { get; set; }
+    public decimal? filtroTasaMinima { get; set; }
+    public decimal? filtroTasaMaxima { get; set; }
     public string? filtroDescripcionTipoIVA { get; set; }
     public DateTime? filtroFechaCreacionDesde { get; set; }
     public DateTime? filtroFechaCreacionHasta { get; set; }
