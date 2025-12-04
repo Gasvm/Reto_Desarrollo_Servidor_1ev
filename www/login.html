@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - More than brows</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="login-body">
+    <div class="login-card">
+        <h1 style="color: var(--rosa-principal); margin-bottom: 10px;">More than Brows</h1>
+        <p style="margin-bottom: 30px; color: var(--gris-oscuro);">Acceso al Sistema de Gestión</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email de Usuario</label>
+                <input type="email" id="email" value="juan.garcia@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="password" value="cualquiera" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
+        </form>
+        <p id="errorMsg" style="color: red; margin-top: 15px; display: none;">Usuario no encontrado en la base de datos.</p>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5044/api'; // Ajustar puerto si es necesario
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            try {
+                // Simulamos login buscando si el cliente existe por email
+                // Nota: En un sistema real usarías un endpoint de Auth
+                const response = await fetch(`${API_URL}/Cliente`);
+                const clientes = await response.json();
+                
+                const usuario = clientes.find(c => c.email === email && c.activo === true);
+
+                if (usuario) {
+                    localStorage.setItem('user', JSON.stringify(usuario));
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                console.error(error);
+                errorMsg.innerText = "Error de conexión con la API";
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
