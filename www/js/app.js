@@ -1,6 +1,6 @@
-const API_URL = 'http://localhost:5044/api'; // Asegúrate que coincide con tu puerto .NET
+const API_URL = 'http://localhost:5044/api'; 
 
-// --- Estado Global ---
+// --- Estado ---
 let cart = [];
 let productosGlobal = [];
 let tiposIvaGlobal = [];
@@ -14,10 +14,11 @@ function checkAuth() {
     const user = localStorage.getItem('user');
     if (!user) {
         window.location.href = 'login.html';
-    } else {
-        const uObj = JSON.parse(user);
-        document.getElementById('userNameDisplay').innerText = `${uObj.nombre} ${uObj.apellidos}`;
+        return;
     }
+    const uObj = JSON.parse(user);
+    const display = document.getElementById('userNameDisplay');
+    if(display) display.innerText = `${uObj.nombre} ${uObj.apellidos}`;
 }
 
 function logout() {
@@ -26,58 +27,72 @@ function logout() {
 }
 
 function initApp() {
-    // Cargar datos iniciales
-    cargarTiposIVA(); // Necesario para productos
-    cargarClientes(); // Necesario para TPV
-    cargarMediosPago(); // Necesario para TPV
-    cargarProductos(); // Necesario para TPV y CRUD
-    cargarTarjetas();
+    // Carga de datos
+    Promise.all([
+        cargarTiposIVA(),
+        cargarClientes(),
+        cargarMediosPago(),
+        cargarProductos()
+    ]).catch(err => console.error("Error inicializando datos", err));
 
-    // Fecha TPV
-    document.getElementById('fecha-hoy').innerText = new Date().toLocaleDateString();
+    const fechaEl = document.getElementById('fecha-hoy');
+    if(fechaEl) fechaEl.innerText = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    // Listeners Forms
+    // Listeners Formularios
     setupForm('form-cliente', 'Cliente', cargarClientes);
     setupForm('form-producto', 'Producto', cargarProductos);
-    setupForm('form-iva', 'TipoIVA', cargarTiposIVA);
-    setupForm('form-pago', 'MedioDePago', cargarMediosPago);
-    setupForm('form-tarjeta', 'TarjetaCredito', cargarTarjetas);
 }
 
 // --- Navegación SPA ---
-window.navTo = function(secId) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(secId).classList.add('active');
+window.navTo = function(secId, linkElement) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.section').forEach(s => {
+        s.classList.remove('section--active');
+        s.setAttribute('aria-hidden', 'true');
+    });
     
-    // Update Sidebar style
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    // Mostrar seleccionada
+    const activeSec = document.getElementById(secId);
+    activeSec.classList.add('section--active');
+    activeSec.setAttribute('aria-hidden', 'false');
+    
+    // Actualizar menú (BEM)
+    document.querySelectorAll('.sidebar__link').forEach(a => {
+        a.classList.remove('sidebar__link--active');
+        a.removeAttribute('aria-current');
+    });
+    if(linkElement) {
+        linkElement.classList.add('sidebar__link--active');
+        linkElement.setAttribute('aria-current', 'page');
+    }
 };
 
-// --- CRUD GENÉRICO Helpers ---
+// --- CRUD Helpers ---
 async function apiCall(endpoint, method = 'GET', body = null) {
     const options = {
         method,
         headers: { 'Content-Type': 'application/json' }
     };
     if (body) options.body = JSON.stringify(body);
-    const res = await fetch(`${API_URL}/${endpoint}`, options);
-    return res; // Devuelve response raw para manejar status
+    return await fetch(`${API_URL}/${endpoint}`, options);
 }
 
 function setupForm(formId, entity, reloadCallback) {
-    document.getElementById(formId).addEventListener('submit', async (e) => {
+    const form = document.getElementById(formId);
+    if(!form) return;
+
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = {};
         
-        // Mapeo manual según la entidad para asegurar tipos correctos
+        // Mapeo básico (extender según necesidad)
         if (entity === 'Cliente') {
             data.idCliente = document.getElementById('cli-id').value || 0;
             data.nombre = document.getElementById('cli-nombre').value;
             data.apellidos = document.getElementById('cli-apellidos').value;
             data.email = document.getElementById('cli-email').value;
             data.telefono = document.getElementById('cli-telefono').value;
-            data.password = document.getElementById('cli-pass').value || "123456"; // Default si no se cambia
+            data.password = "123456"; 
             data.fechaCreacion = new Date().toISOString();
             data.activo = true;
         } else if (entity === 'Producto') {
@@ -87,40 +102,19 @@ function setupForm(formId, entity, reloadCallback) {
             data.idTipoIVA = parseInt(document.getElementById('prod-iva').value);
             data.fechaCreacion = new Date().toISOString();
             data.activo = true;
-        } else if (entity === 'TipoIVA') {
-            data.idTipoIVA = document.getElementById('iva-id').value || 0;
-            data.descripcion = document.getElementById('iva-desc').value;
-            data.tasa = parseFloat(document.getElementById('iva-tasa').value);
-            data.fechaCreacion = new Date().toISOString();
-            data.activo = true;
-        } else if (entity === 'MedioDePago') {
-            data.idMedioDePago = document.getElementById('pago-id').value || 0;
-            data.descripcion = document.getElementById('pago-desc').value;
-            data.fechaCreacion = new Date().toISOString();
-            data.activo = true;
-        } else if (entity === 'TarjetaCredito') {
-            data.idTarjetaCredito = document.getElementById('tarj-id').value || 0;
-            data.descripcion = document.getElementById('tarj-desc').value;
-            data.numeroTarjeta = document.getElementById('tarj-num').value;
-            data.fechaCaducidad = document.getElementById('tarj-cad').value;
-            data.idCliente = parseInt(document.getElementById('tarj-cli').value);
-            data.fechaCreacion = new Date().toISOString();
-            data.activo = true;
         }
 
-        // Determinar si es POST o PUT
-        const id = data[`id${entity}`]; // ej: data.idCliente
+        const id = data[`id${entity}`];
         const method = (id && id != 0) ? 'PUT' : 'POST';
         
-        // El backend espera el objeto completo en el body
         try {
             const res = await apiCall(entity, method, data);
             if(res.ok) {
                 alert('Guardado correctamente');
-                window[`limpiarForm`](formId);
+                window.limpiarForm(formId);
                 reloadCallback();
             } else {
-                alert('Error al guardar');
+                alert('Error al guardar. Verifique los datos.');
             }
         } catch(err) { console.error(err); }
     });
@@ -128,52 +122,44 @@ function setupForm(formId, entity, reloadCallback) {
 
 window.limpiarForm = function(formId) {
     document.getElementById(formId).reset();
-    // Limpiar campos hidden de ID
     document.getElementById(formId).querySelector('input[type=hidden]').value = '';
 }
 
 window.eliminar = async function(entity, id, callback) {
-    if(!confirm('¿Seguro que deseas eliminar?')) return;
+    if(!confirm('¿Seguro que deseas eliminar este registro?')) return;
     await apiCall(`${entity}/${id}`, 'DELETE');
     callback();
 }
 
-// --- LOGICA ESPECIFICA DE ENTIDADES ---
+// --- Carga de Datos ---
 
-// 1. Clientes
 async function cargarClientes() {
     const res = await apiCall('Cliente');
     const data = await res.json();
     const tbody = document.getElementById('tabla-clientes');
-    tbody.innerHTML = '';
-    
-    // Llenar selects de TPV y Tarjetas
     const selectTPV = document.getElementById('modal-cliente');
-    const selectTarj = document.getElementById('tarj-cli');
-    selectTPV.innerHTML = ''; selectTarj.innerHTML = '';
+    
+    if(tbody) tbody.innerHTML = '';
+    if(selectTPV) selectTPV.innerHTML = '';
 
     data.forEach(d => {
         if(!d.activo) return;
         
-        // Tabla CRUD
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.idCliente}</td>
-                <td>${d.nombre} ${d.apellidos}</td>
-                <td>${d.email}</td>
-                <td>${d.telefono}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editarCliente(${d.idCliente})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminar('Cliente', ${d.idCliente}, cargarClientes)">Del</button>
-                </td>
-            </tr>`;
-        
-        // Selects
-        const opt = `<option value="${d.idCliente}">${d.nombre} ${d.apellidos}</option>`;
-        selectTPV.innerHTML += opt;
-        selectTarj.innerHTML += opt;
+        if(tbody) {
+            tbody.innerHTML += `
+                <tr>
+                    <td class="data-table__cell">${d.nombre} ${d.apellidos}</td>
+                    <td class="data-table__cell">${d.email}</td>
+                    <td class="data-table__cell">
+                        <button class="btn btn--sm btn--primary" onclick="editarCliente(${d.idCliente})">Editar</button>
+                        <button class="btn btn--sm btn--danger" onclick="eliminar('Cliente', ${d.idCliente}, cargarClientes)">Borrar</button>
+                    </td>
+                </tr>`;
+        }
+        if(selectTPV) selectTPV.innerHTML += `<option value="${d.idCliente}">${d.nombre} ${d.apellidos}</option>`;
     });
 }
+
 window.editarCliente = async (id) => {
     const res = await apiCall(`Cliente/${id}`);
     const d = await res.json();
@@ -182,80 +168,59 @@ window.editarCliente = async (id) => {
     document.getElementById('cli-apellidos').value = d.apellidos;
     document.getElementById('cli-email').value = d.email;
     document.getElementById('cli-telefono').value = d.telefono;
-    document.getElementById('cli-pass').value = d.password;
-    window.navTo('sec-clientes');
+    // Forzar navegación
+    const tabLink = document.querySelector('a[onclick*="sec-clientes"]');
+    if(tabLink) tabLink.click();
 };
 
-// 2. Tipos IVA (Cargar primero para Productos)
 async function cargarTiposIVA() {
     const res = await apiCall('TipoIVA');
-    const data = await res.json();
-    tiposIvaGlobal = data; // Cache para cálculos TPV
-    
-    const tbody = document.getElementById('tabla-ivas');
-    const selectProd = document.getElementById('prod-iva');
-    tbody.innerHTML = ''; selectProd.innerHTML = '';
-
-    data.forEach(d => {
-        if(!d.activo) return;
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.idTipoIVA}</td>
-                <td>${d.descripcion}</td>
-                <td>${d.tasa}%</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editarIVA(${d.idTipoIVA})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminar('TipoIVA', ${d.idTipoIVA}, cargarTiposIVA)">Del</button>
-                </td>
-            </tr>`;
-        selectProd.innerHTML += `<option value="${d.idTipoIVA}">${d.descripcion} (${d.tasa}%)</option>`;
-    });
+    tiposIvaGlobal = await res.json();
+    const select = document.getElementById('prod-iva');
+    if(select) {
+        select.innerHTML = '';
+        tiposIvaGlobal.forEach(t => {
+            if(t.activo) select.innerHTML += `<option value="${t.idTipoIVA}">${t.descripcion} (${t.tasa}%)</option>`;
+        });
+    }
 }
-window.editarIVA = async (id) => {
-    const res = await apiCall(`TipoIVA/${id}`);
-    const d = await res.json();
-    document.getElementById('iva-id').value = d.idTipoIVA;
-    document.getElementById('iva-desc').value = d.descripcion;
-    document.getElementById('iva-tasa').value = d.tasa;
-};
 
-
-// 3. Productos
 async function cargarProductos() {
     const res = await apiCall('Producto');
-    const data = await res.json();
-    productosGlobal = data; // Cache TPV
+    productosGlobal = await res.json();
     
     const tbody = document.getElementById('tabla-productos');
     const gridTPV = document.getElementById('tpv-productos');
-    tbody.innerHTML = ''; gridTPV.innerHTML = '';
+    
+    if(tbody) tbody.innerHTML = ''; 
+    if(gridTPV) gridTPV.innerHTML = '';
 
-    data.forEach(d => {
+    productosGlobal.forEach(d => {
         if(!d.activo) return;
         
-        // CRUD Row
-        const iva = tiposIvaGlobal.find(i => i.idTipoIVA === d.idTipoIVA);
-        const ivaDesc = iva ? `${iva.tasa}%` : '?';
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.idProducto}</td>
-                <td>${d.descripcion}</td>
-                <td>${d.precio.toFixed(2)}</td>
-                <td>${ivaDesc}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editarProducto(${d.idProducto})">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminar('Producto', ${d.idProducto}, cargarProductos)">Del</button>
-                </td>
-            </tr>`;
+        if(tbody) {
+            tbody.innerHTML += `
+                <tr>
+                    <td class="data-table__cell">${d.descripcion}</td>
+                    <td class="data-table__cell">${d.precio.toFixed(2)} €</td>
+                    <td class="data-table__cell">
+                        <button class="btn btn--sm btn--primary" onclick="editarProducto(${d.idProducto})">Editar</button>
+                        <button class="btn btn--sm btn--danger" onclick="eliminar('Producto', ${d.idProducto}, cargarProductos)">Borrar</button>
+                    </td>
+                </tr>`;
+        }
 
-        // TPV Card
-        gridTPV.innerHTML += `
-            <div class="tpv-card" onclick="addToCart(${d.idProducto})">
-                <h4>${d.descripcion}</h4>
-                <span class="price">${d.precio.toFixed(2)} €</span>
-            </div>`;
+        // Card Accesible (button)
+        if(gridTPV) {
+            gridTPV.innerHTML += `
+                <button class="product-card" onclick="addToCart(${d.idProducto})" aria-label="Añadir ${d.descripcion} al carrito">
+                    <span class="product-card__title">${d.descripcion}</span>
+                    <span class="product-card__price">${d.precio.toFixed(2)} €</span>
+                </button>`;
+        }
     });
 }
+
 window.editarProducto = async (id) => {
     const res = await apiCall(`Producto/${id}`);
     const d = await res.json();
@@ -263,39 +228,23 @@ window.editarProducto = async (id) => {
     document.getElementById('prod-desc').value = d.descripcion;
     document.getElementById('prod-precio').value = d.precio;
     document.getElementById('prod-iva').value = d.idTipoIVA;
-    window.navTo('sec-productos');
+    const tabLink = document.querySelector('a[onclick*="sec-productos"]');
+    if(tabLink) tabLink.click();
 };
 
-// 4. Medios de Pago
 async function cargarMediosPago() {
     const res = await apiCall('MedioDePago');
     const data = await res.json();
-    
-    const tbody = document.getElementById('tabla-pagos');
-    const selectModal = document.getElementById('modal-medio');
-    tbody.innerHTML = ''; selectModal.innerHTML = '';
-
-    data.forEach(d => {
-        if(!d.activo) return;
-        tbody.innerHTML += `<tr><td>${d.idMedioDePago}</td><td>${d.descripcion}</td><td>...</td></tr>`;
-        selectModal.innerHTML += `<option value="${d.idMedioDePago}">${d.descripcion}</option>`;
-    });
+    const sel = document.getElementById('modal-medio');
+    if(sel) {
+        sel.innerHTML = '';
+        data.forEach(d => {
+            if(d.activo) sel.innerHTML += `<option value="${d.idMedioDePago}">${d.descripcion}</option>`;
+        });
+    }
 }
 
-// 5. Tarjetas
-async function cargarTarjetas() {
-    const res = await apiCall('TarjetaCredito');
-    const data = await res.json();
-    const tbody = document.getElementById('tabla-tarjetas');
-    tbody.innerHTML = '';
-    
-    data.forEach(d => {
-        if(!d.activo) return;
-        tbody.innerHTML += `<tr><td>${d.idTarjetaCredito}</td><td>${d.descripcion}</td><td>${d.numeroTarjeta}</td><td>${d.idCliente}</td><td>...</td></tr>`;
-    });
-}
-
-// --- LÓGICA TPV ---
+// --- TPV Lógica ---
 
 window.addToCart = function(prodId) {
     const prod = productosGlobal.find(p => p.idProducto === prodId);
@@ -312,34 +261,38 @@ window.addToCart = function(prodId) {
 
 function renderCart() {
     const container = document.getElementById('ticket-items');
-    container.innerHTML = '';
+    if(!container) return;
     
+    container.innerHTML = '';
     let subtotal = 0;
     
+    if(cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:10px;">Carrito vacío</p>';
+    }
+
     cart.forEach((item, index) => {
         const totalLinea = item.precio * item.cantidad;
         subtotal += totalLinea;
         
         container.innerHTML += `
-            <div class="ticket-item">
+            <div class="ticket__item">
                 <div style="flex:1">
                     <strong>${item.descripcion}</strong><br>
-                    <small>${item.cantidad} x ${item.precio.toFixed(2)}</small>
+                    <small>${item.cantidad} x ${item.precio.toFixed(2)} €</small>
                 </div>
                 <div>
-                    <span>${totalLinea.toFixed(2)} €</span>
-                    <button class="btn btn-sm btn-danger" style="margin-left:5px; padding:2px 6px;" onclick="removeFromCart(${index})">X</button>
+                    <span style="margin-right:8px;">${totalLinea.toFixed(2)} €</span>
+                    <button class="btn btn--sm btn--danger" onclick="removeFromCart(${index})" aria-label="Quitar ${item.descripcion}">X</button>
                 </div>
             </div>
         `;
     });
 
-    // Cálculos simples (En real, usar tasa IVA de cada producto)
-    // Aquí asumimos IVA incluido o cálculo general para visualización
-    const total = subtotal; 
-    
-    document.getElementById('lbl-subtotal').innerText = (total * 0.79).toFixed(2) + ' €'; // Aprox base
-    document.getElementById('lbl-iva').innerText = (total * 0.21).toFixed(2) + ' €'; // Aprox 21%
+    const ivaEstimado = subtotal * 0.21; // Simplificación
+    const total = subtotal;
+
+    document.getElementById('lbl-subtotal').innerText = (total - ivaEstimado).toFixed(2) + ' €';
+    document.getElementById('lbl-iva').innerText = ivaEstimado.toFixed(2) + ' €';
     document.getElementById('lbl-total').innerText = total.toFixed(2) + ' €';
     document.getElementById('modal-total').innerText = total.toFixed(2) + ' €';
 }
@@ -351,49 +304,54 @@ window.removeFromCart = function(index) {
 
 window.abrirModalPago = function() {
     if(cart.length === 0) { alert('El ticket está vacío'); return; }
-    document.getElementById('modal-pago').classList.add('active');
-    checkMedioPago();
+    const modal = document.getElementById('modal-pago');
+    modal.classList.add('modal--active');
+    modal.setAttribute('aria-hidden', 'false');
+    window.checkMedioPago(); // Init estado tarjetas
 }
 
-window.checkMedioPago = function() {
-    // Si selecciona tarjeta, mostrar desplegable de tarjetas del cliente
-    // Para simplificar, mostramos si la descripción contiene "Tarjeta"
+window.cerrarModal = function() {
+    const modal = document.getElementById('modal-pago');
+    modal.classList.remove('modal--active');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+window.checkMedioPago = async function() {
     const sel = document.getElementById('modal-medio');
     const txt = sel.options[sel.selectedIndex].text.toLowerCase();
     const div = document.getElementById('div-tarjeta');
+    const selTarj = document.getElementById('modal-tarjeta');
     
     if(txt.includes('tarjeta')) {
         div.style.display = 'block';
-        // Cargar tarjetas del cliente seleccionado
-        cargarTarjetasClienteModal();
+        const cliId = document.getElementById('modal-cliente').value;
+        // Cargar tarjetas del cliente
+        const res = await apiCall('TarjetaCredito'); 
+        const all = await res.json();
+        // Filtro manual (mejorar con query params en backend)
+        const filtered = all.filter(t => t.idCliente == cliId && t.activo);
+        
+        selTarj.innerHTML = '';
+        if(filtered.length > 0) {
+            filtered.forEach(t => selTarj.innerHTML += `<option value="${t.idTarjetaCredito}">${t.descripcion} (***${t.numeroTarjeta.slice(-4)})</option>`);
+        } else {
+            selTarj.innerHTML = '<option value="">Sin tarjetas registradas</option>';
+        }
     } else {
         div.style.display = 'none';
     }
 }
 
-async function cargarTarjetasClienteModal() {
-    const cliId = parseInt(document.getElementById('modal-cliente').value);
-    const res = await apiCall('TarjetaCredito'); // Idealmente filtrar por QueryParams
-    const all = await res.json();
-    const filtered = all.filter(t => t.idCliente === cliId && t.activo);
-    
-    const sel = document.getElementById('modal-tarjeta');
-    sel.innerHTML = '';
-    filtered.forEach(t => {
-        sel.innerHTML += `<option value="${t.idTarjetaCredito}">${t.descripcion} - ${t.numeroTarjeta}</option>`;
-    });
-}
-
 window.procesarPedido = async function() {
     const clienteId = parseInt(document.getElementById('modal-cliente').value);
     const medioId = parseInt(document.getElementById('modal-medio').value);
-    const tarjetaId = document.getElementById('div-tarjeta').style.display === 'block' 
-                      ? parseInt(document.getElementById('modal-tarjeta').value) 
-                      : null;
+    
+    let tarjetaId = null;
+    if(document.getElementById('div-tarjeta').style.display !== 'none') {
+        const val = document.getElementById('modal-tarjeta').value;
+        if(val) tarjetaId = parseInt(val);
+    }
 
-    if(!clienteId || !medioId) { alert('Faltan datos'); return; }
-
-    // 1. Crear Cabecera
     const cabecera = {
         idCliente: clienteId,
         fechaPedido: new Date().toISOString(),
@@ -403,25 +361,18 @@ window.procesarPedido = async function() {
     };
 
     try {
-        // En tu backend, PedidoCab no devuelve el ID en el POST (void), 
-        // así que no podemos insertar las líneas linkeadas correctamente sin modificar el backend
-        // para que devuelva el objeto creado.
-        // **Workaround para este ejemplo**: Insertamos la cabecera, y luego buscamos el último pedido de este cliente.
-        
+        // 1. Cabecera
         await apiCall('PedidoCab', 'POST', cabecera);
         
-        // Obtener ID (chapuza necesaria por limitación API void)
-        const resPedidos = await apiCall(`PedidoCab?filtroIdCliente=${clienteId}`);
-        const pedidos = await resPedidos.json();
-        // Asumimos el último pedido es el nuestro
-        const ultimoPedido = pedidos.sort((a,b) => b.idPedido - a.idPedido)[0];
-        
-        if(!ultimoPedido) throw new Error("No se pudo recuperar el pedido");
+        // 2. Recuperar ID (Workaround por void return)
+        const resPed = await apiCall(`PedidoCab?filtroIdCliente=${clienteId}`);
+        const pedidos = await resPed.json();
+        const ultimo = pedidos.sort((a,b) => b.idPedido - a.idPedido)[0];
 
-        // 2. Crear Líneas
-        for (const item of cart) {
+        // 3. Líneas
+        for(const item of cart) {
             const linea = {
-                idPedido: ultimoPedido.idPedido,
+                idPedido: ultimo.idPedido,
                 idProducto: item.idProducto,
                 precio: item.precio,
                 descuento: 0,
@@ -433,13 +384,13 @@ window.procesarPedido = async function() {
             await apiCall('PedidoLin', 'POST', linea);
         }
 
-        alert(`¡Pedido ${ultimoPedido.idPedido} creado con éxito!`);
+        alert('Venta realizada con éxito');
         cart = [];
         renderCart();
-        document.getElementById('modal-pago').classList.remove('active');
+        cerrarModal();
 
     } catch(err) {
         console.error(err);
-        alert('Error al procesar el pedido. Revisa la consola.');
+        alert('Error procesando la venta');
     }
-};
+}

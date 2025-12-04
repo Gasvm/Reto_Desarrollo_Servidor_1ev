@@ -2,30 +2,39 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login - More than brows</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - More than brows</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="login-body">
-    <div class="login-card">
-        <h1 style="color: var(--rosa-principal); margin-bottom: 10px;">More than Brows</h1>
-        <p style="margin-bottom: 30px; color: var(--gris-oscuro);">Acceso al Sistema de Gestión</p>
+<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+
+    <main class="modal__content" role="main">
+        <header style="text-align: center; margin-bottom: 32px;">
+            <h1 style="color: var(--color-primary); font-weight: 300;">More than Brows</h1>
+            <p>Sistema de Gestión</p>
+        </header>
         
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email de Usuario</label>
-                <input type="email" id="email" value="juan.garcia@email.com" required>
+        <form id="loginForm" class="form">
+            <div class="form__group">
+                <label for="email" class="form__label">Correo Electrónico</label>
+                <input type="email" id="email" class="form__input" value="juan.garcia@email.com" required aria-required="true">
             </div>
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="password" value="cualquiera" required>
+            
+            <div class="form__group">
+                <label for="password" class="form__label">Contraseña</label>
+                <input type="password" id="password" class="form__input" value="123456" required aria-required="true">
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
+            
+            <button type="submit" class="btn btn--primary btn--block">Iniciar Sesión</button>
         </form>
-        <p id="errorMsg" style="color: red; margin-top: 15px; display: none;">Usuario no encontrado en la base de datos.</p>
-    </div>
+
+        <div id="errorMsg" role="alert" aria-live="assertive" style="color: var(--color-danger); margin-top: 16px; display: none; text-align: center;">
+            Usuario o contraseña incorrectos.
+        </div>
+    </main>
 
     <script>
-        const API_URL = 'http://localhost:5044/api'; // Ajustar puerto si es necesario
+        const API_URL = 'http://localhost:5044/api'; 
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -33,12 +42,11 @@
             const errorMsg = document.getElementById('errorMsg');
             
             try {
-                // Simulamos login buscando si el cliente existe por email
-                // Nota: En un sistema real usarías un endpoint de Auth
-                const response = await fetch(`${API_URL}/Cliente`);
+                // Login simulado buscando usuario activo
+                const response = await fetch(`${API_URL}/Cliente?filtroEstadoActivo=true`);
                 const clientes = await response.json();
                 
-                const usuario = clientes.find(c => c.email === email && c.activo === true);
+                const usuario = clientes.find(c => c.email === email);
 
                 if (usuario) {
                     localStorage.setItem('user', JSON.stringify(usuario));
@@ -48,7 +56,7 @@
                 }
             } catch (error) {
                 console.error(error);
-                errorMsg.innerText = "Error de conexión con la API";
+                errorMsg.textContent = "Error de conexión con el servidor.";
                 errorMsg.style.display = 'block';
             }
         });

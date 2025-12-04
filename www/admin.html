@@ -3,165 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - More than brows</title>
+    <title>Panel - More than brows</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="brand">
-                <h2>More than brows</h2>
+    <div class="layout">
+        <nav class="sidebar" aria-label="Navegación principal">
+            <div class="sidebar__brand">
+                <h2 class="sidebar__brand-title">More than brows</h2>
                 <small id="userNameDisplay">Usuario</small>
             </div>
-            <ul class="nav-links">
-                <li><a href="#" onclick="navTo('sec-tpv')" class="active"><span class="nav-icon">🛒</span> TPV / Venta</a></li>
-                <li><a href="#" onclick="navTo('sec-clientes')"><span class="nav-icon">👥</span> Clientes</a></li>
-                <li><a href="#" onclick="navTo('sec-productos')"><span class="nav-icon">📦</span> Productos</a></li>
-                <li><a href="#" onclick="navTo('sec-ivas')"><span class="nav-icon">tax</span> Tipos IVA</a></li>
-                <li><a href="#" onclick="navTo('sec-pagos')"><span class="nav-icon">💳</span> Medios de Pago</a></li>
-                <li><a href="#" onclick="navTo('sec-tarjetas')"><span class="nav-icon">🪪</span> Tarjetas</a></li>
-                <li style="margin-top: auto; border-top: 1px solid #eee;">
-                    <a href="#" onclick="logout()" style="color: #ff6b6b;"><span class="nav-icon">🚪</span> Cerrar Sesión</a>
+            <ul class="sidebar__nav">
+                <li>
+                    <a href="#" onclick="navTo('sec-tpv', this)" class="sidebar__link sidebar__link--active" aria-current="page">
+                        <svg class="sidebar__icon" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        <span>TPV</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navTo('sec-clientes', this)" class="sidebar__link">
+                        <svg class="sidebar__icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>Clientes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navTo('sec-productos', this)" class="sidebar__link">
+                        <svg class="sidebar__icon" viewBox="0 0 24 24"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/></svg>
+                        <span>Prod.</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()" class="sidebar__link" style="color: var(--color-danger);">
+                        <svg class="sidebar__icon" viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                        <span>Salir</span>
+                    </a>
                 </li>
             </ul>
-        </aside>
+        </nav>
 
-        <main class="main-content">
+        <main class="layout__main" id="main-content">
             
-            <section id="sec-tpv" class="section active">
-                <div class="page-header">
-                    <h2>Terminal Punto de Venta</h2>
-                    <span id="fecha-hoy" style="color: var(--gris-oscuro);"></span>
-                </div>
-                <div class="tpv-layout">
-                    <div id="tpv-productos" class="product-grid">
+            <section id="sec-tpv" class="section section--active" aria-labelledby="title-tpv">
+                <header class="page-header">
+                    <h2 id="title-tpv" class="page-header__title">Terminal Punto de Venta</h2>
+                    <p id="fecha-hoy" class="form__label" style="font-weight: normal;"></p>
+                </header>
+
+                <div class="tpv">
+                    <div id="tpv-productos" class="tpv__grid" role="list">
                         </div>
-                    <div class="ticket-panel">
-                        <div class="ticket-header">
-                            <h3>Ticket de Venta</h3>
+
+                    <div class="ticket tpv__ticket">
+                        <h3 class="form__label" style="text-align: center; border-bottom: 2px dashed #CCC; padding-bottom: 8px;">Ticket Actual</h3>
+                        
+                        <div id="ticket-items" class="ticket__items" role="list">
+                            <p style="text-align:center; color: var(--color-text-light);">Carrito vacío</p>
                         </div>
-                        <div id="ticket-items" class="ticket-items">
-                            <p style="text-align:center; color:gray; margin-top:20px;">Ticket vacío</p>
-                        </div>
-                        <div class="ticket-total-section">
-                            <div class="ticket-row">
+
+                        <div class="ticket__summary">
+                            <div style="display:flex; justify-content:space-between;">
                                 <span>Subtotal:</span>
                                 <span id="lbl-subtotal">0.00 €</span>
                             </div>
-                            <div class="ticket-row">
+                            <div style="display:flex; justify-content:space-between;">
                                 <span>IVA:</span>
                                 <span id="lbl-iva">0.00 €</span>
                             </div>
-                            <div class="ticket-row" style="margin-top:10px;">
-                                <span class="total-final">TOTAL:</span>
-                                <span class="total-final" id="lbl-total">0.00 €</span>
+                            <div style="display:flex; justify-content:space-between; margin-top: 10px; font-weight: bold;">
+                                <span class="ticket__total">TOTAL:</span>
+                                <span class="ticket__total" id="lbl-total">0.00 €</span>
                             </div>
-                            <button class="btn btn-primary" style="width:100%; margin-top:15px; padding:15px;" onclick="abrirModalPago()">COBRAR</button>
+                            <button class="btn btn--primary btn--block" style="margin-top: 16px;" onclick="abrirModalPago()">COBRAR</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="sec-clientes" class="section">
-                <div class="page-header">
-                    <h2>Gestión de Clientes</h2>
-                </div>
-                <form id="form-cliente" class="form-grid">
+            <section id="sec-clientes" class="section" aria-labelledby="title-clientes">
+                <header class="page-header">
+                    <h2 id="title-clientes" class="page-header__title">Gestión de Clientes</h2>
+                </header>
+
+                <form id="form-cliente" class="form">
                     <input type="hidden" id="cli-id">
-                    <div class="form-group"><label>Nombre</label><input type="text" id="cli-nombre" required></div>
-                    <div class="form-group"><label>Apellidos</label><input type="text" id="cli-apellidos" required></div>
-                    <div class="form-group"><label>Email</label><input type="email" id="cli-email" required></div>
-                    <div class="form-group"><label>Teléfono</label><input type="text" id="cli-telefono"></div>
-                    <div class="form-group"><label>Password</label><input type="password" id="cli-pass" placeholder="***"></div>
-                    <div class="form-group" style="display:flex; align-items:end;">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn" onclick="limpiarForm('form-cliente')">Limpiar</button>
+                    <div class="form__group">
+                        <label for="cli-nombre" class="form__label">Nombre</label>
+                        <input type="text" id="cli-nombre" class="form__input" required>
                     </div>
+                    <div class="form__group">
+                        <label for="cli-email" class="form__label">Email</label>
+                        <input type="email" id="cli-email" class="form__input" required>
+                    </div>
+                    <div class="form__group">
+                        <label for="cli-apellidos" class="form__label">Apellidos</label>
+                        <input type="text" id="cli-apellidos" class="form__input" required>
+                    </div>
+                    <div class="form__group">
+                        <label for="cli-telefono" class="form__label">Teléfono</label>
+                        <input type="tel" id="cli-telefono" class="form__input">
+                    </div>
+                    <button type="submit" class="btn btn--primary">Guardar Cliente</button>
+                    <button type="button" class="btn" onclick="limpiarForm('form-cliente')">Limpiar</button>
                 </form>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead class="data-table__header">
+                            <tr>
+                                <th class="data-table__th">Nombre</th>
+                                <th class="data-table__th">Email</th>
+                                <th class="data-table__th">Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody id="tabla-clientes"></tbody>
                     </table>
                 </div>
             </section>
 
-            <section id="sec-productos" class="section">
-                <div class="page-header">
-                    <h2>Gestión de Productos</h2>
-                </div>
-                <form id="form-producto" class="form-grid">
+            <section id="sec-productos" class="section" aria-labelledby="title-productos">
+                <header class="page-header"><h2 id="title-productos" class="page-header__title">Gestión de Productos</h2></header>
+                
+                <form id="form-producto" class="form">
                     <input type="hidden" id="prod-id">
-                    <div class="form-group"><label>Descripción</label><input type="text" id="prod-desc" required></div>
-                    <div class="form-group"><label>Precio</label><input type="number" step="0.01" id="prod-precio" required></div>
-                    <div class="form-group"><label>Tipo IVA</label><select id="prod-iva"></select></div>
-                    <div class="form-group" style="display:flex; align-items:end;">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn" onclick="limpiarForm('form-producto')">Limpiar</button>
+                    <div class="form__group">
+                        <label for="prod-desc" class="form__label">Descripción</label>
+                        <input type="text" id="prod-desc" class="form__input" required>
                     </div>
+                    <div class="form__group">
+                        <label for="prod-precio" class="form__label">Precio (€)</label>
+                        <input type="number" step="0.01" id="prod-precio" class="form__input" required>
+                    </div>
+                    <div class="form__group">
+                        <label for="prod-iva" class="form__label">Tipo IVA</label>
+                        <select id="prod-iva" class="form__select"></select>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Guardar Producto</button>
+                    <button type="button" class="btn" onclick="limpiarForm('form-producto')">Limpiar</button>
                 </form>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Descripción</th><th>Precio</th><th>Tipo IVA</th><th>Acciones</th></tr></thead>
+
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead class="data-table__header">
+                            <tr>
+                                <th class="data-table__th">Descripción</th>
+                                <th class="data-table__th">Precio</th>
+                                <th class="data-table__th">Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody id="tabla-productos"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="sec-ivas" class="section">
-                <div class="page-header"><h2>Tipos de IVA</h2></div>
-                <form id="form-iva" class="form-grid">
-                    <input type="hidden" id="iva-id">
-                    <div class="form-group"><label>Descripción</label><input type="text" id="iva-desc" required></div>
-                    <div class="form-group"><label>Tasa %</label><input type="number" step="0.01" id="iva-tasa" required></div>
-                    <div class="form-group" style="display:flex; align-items:end;">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn" onclick="limpiarForm('form-iva')">Limpiar</button>
-                    </div>
-                </form>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Descripción</th><th>Tasa</th><th>Acciones</th></tr></thead>
-                        <tbody id="tabla-ivas"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="sec-pagos" class="section">
-                <div class="page-header"><h2>Medios de Pago</h2></div>
-                <form id="form-pago" class="form-grid">
-                    <input type="hidden" id="pago-id">
-                    <div class="form-group"><label>Descripción</label><input type="text" id="pago-desc" required></div>
-                    <div class="form-group" style="display:flex; align-items:end;">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn" onclick="limpiarForm('form-pago')">Limpiar</button>
-                    </div>
-                </form>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Descripción</th><th>Acciones</th></tr></thead>
-                        <tbody id="tabla-pagos"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="sec-tarjetas" class="section">
-                <div class="page-header"><h2>Tarjetas de Crédito</h2></div>
-                <form id="form-tarjeta" class="form-grid">
-                    <input type="hidden" id="tarj-id">
-                    <div class="form-group"><label>Descripción</label><input type="text" id="tarj-desc" required></div>
-                    <div class="form-group"><label>Número</label><input type="text" id="tarj-num" required></div>
-                    <div class="form-group"><label>Caducidad</label><input type="date" id="tarj-cad" required></div>
-                    <div class="form-group"><label>Cliente</label><select id="tarj-cli"></select></div>
-                    <div class="form-group" style="display:flex; align-items:end;">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn" onclick="limpiarForm('form-tarjeta')">Limpiar</button>
-                    </div>
-                </form>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Descripción</th><th>Número</th><th>Cliente</th><th>Acciones</th></tr></thead>
-                        <tbody id="tabla-tarjetas"></tbody>
                     </table>
                 </div>
             </section>
@@ -169,28 +158,32 @@
         </main>
     </div>
 
-    <div id="modal-pago" class="modal">
-        <div class="modal-content">
-            <h2 style="color:var(--rosa-principal); margin-bottom:20px;">Finalizar Compra</h2>
-            <div class="form-group">
-                <label>Cliente</label>
-                <select id="modal-cliente"></select>
-            </div>
-            <div class="form-group">
-                <label>Medio de Pago</label>
-                <select id="modal-medio" onchange="checkMedioPago()"></select>
-            </div>
-            <div class="form-group" id="div-tarjeta" style="display:none;">
-                <label>Tarjeta del Cliente</label>
-                <select id="modal-tarjeta"></select>
-                <small style="color:gray;">Solo si el cliente tiene tarjetas registradas</small>
+    <div id="modal-pago" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal__content">
+            <h2 id="modal-title" style="color: var(--color-primary); margin-bottom: 20px;">Finalizar Venta</h2>
+            
+            <div class="form__group">
+                <label for="modal-cliente" class="form__label">Seleccionar Cliente</label>
+                <select id="modal-cliente" class="form__select"></select>
             </div>
             
-            <h3 style="text-align:right; margin-top:20px;">Total: <span id="modal-total">0.00 €</span></h3>
-            
-            <div class="modal-footer">
-                <button class="btn" onclick="document.getElementById('modal-pago').classList.remove('active')">Cancelar</button>
-                <button class="btn btn-primary" onclick="procesarPedido()">Confirmar Pedido</button>
+            <div class="form__group">
+                <label for="modal-medio" class="form__label">Medio de Pago</label>
+                <select id="modal-medio" class="form__select" onchange="checkMedioPago()"></select>
+            </div>
+
+            <div class="form__group" id="div-tarjeta" style="display:none;">
+                <label for="modal-tarjeta" class="form__label">Tarjeta Vinculada</label>
+                <select id="modal-tarjeta" class="form__select"></select>
+            </div>
+
+            <div style="text-align: right; margin: 20px 0; font-size: 1.2rem;">
+                Total a Pagar: <strong id="modal-total" style="color: var(--color-primary);">0.00 €</strong>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn--danger" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn btn--primary" onclick="procesarPedido()">Confirmar</button>
             </div>
         </div>
     </div>
