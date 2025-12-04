@@ -10,7 +10,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
         public PedidoCabRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("PedidosBD") ?? "Not found";
+            _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
         
@@ -47,21 +47,21 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 var miQuery = pedidosCab.AsQueryable();
                 
                 // Filtro por IdCliente
-                var _filtroIdCliente = filters.filtroIdCliente;
-                if (_filtroIdCliente.HasValue)
+                var _filtroIdCliente = filters.filtroIdCliente ?? -1;
+                if (_filtroIdCliente > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente.Value);                    
+                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente);                    
                 }
 
                 // Filtro por IdMedioPago
-                var _filtroIdMedioPago = filters.filtroIdMedioPago;
-                if (_filtroIdMedioPago.HasValue)
+                var _filtroIdMedioPago = filters.filtroIdMedioPago ?? -1;
+                if (_filtroIdMedioPago > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago.Value);                    
+                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago);                    
                 }
 
                 // Filtro por FechaPedidoDesde
-                var _filtroFechaPedidoDesde = filters.filtroFechaPedidoDesde;
+                var _filtroFechaPedidoDesde = filters.filtroFechaPedidoDesde ?? null;
                 if (_filtroFechaPedidoDesde.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido >= _filtroFechaPedidoDesde.Value);
