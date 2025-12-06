@@ -26,7 +26,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             return await _ClienteRepository.GetByIdAsync(id);
         }
 
-        public async Task AddAsync(Cliente cliente)
+        public async Task<int> AddAsync(Cliente cliente)
         {
             if (string.IsNullOrWhiteSpace(cliente.nombre))
                 throw new ArgumentException("El nombre del cliente no puede estar vacío.");
@@ -38,7 +38,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
                 throw new ArgumentException("El email del cliente no puede estar vacío.");
 
 
-            await _ClienteRepository.AddAsync(cliente);
+            return await _ClienteRepository.AddAsync(cliente);
         }
 
         public async Task UpdateAsync(Cliente cliente)

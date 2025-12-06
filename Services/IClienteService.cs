@@ -6,7 +6,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
     {
         Task<List<Cliente>> GetAllAsync(QueryParamsFilters? filters);
         Task<Cliente?> GetByIdAsync(int id);
-        Task AddAsync(Cliente cliente);
+        Task<int> AddAsync(Cliente cliente);    //Cambiado para devolver el id del cliente
         Task UpdateAsync(Cliente cliente);
         Task DeleteAsync(int id);
         

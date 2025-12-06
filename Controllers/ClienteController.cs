@@ -43,8 +43,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpPost]
         public async Task<ActionResult<Cliente>> CreateCliente(Cliente cliente)
         {
-            await _clienteService.AddAsync(cliente);
-            return CreatedAtAction(nameof(GetCliente), new { id = cliente.idCliente }, cliente);
+            var idGenerado = await _clienteService.AddAsync(cliente);
+            cliente.idCliente = idGenerado;
+            return CreatedAtAction(nameof(GetCliente), new { id = idGenerado }, cliente);
         }
 
        [HttpPut("{id}")]

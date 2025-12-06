@@ -114,7 +114,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
 
         //Nos estamos planteando si sería conveniente devolver el id generado al insertar un nuevo cliente
-        public async Task AddAsync(Cliente cliente)
+        public async Task<int> AddAsync(Cliente cliente)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -132,7 +132,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@FechaCreacion", cliente.fechaCreacion ?? DateTime.Now);
                     command.Parameters.AddWithValue("@Activo", cliente.activo);
 
-                    await command.ExecuteNonQueryAsync();
+                    //await command.ExecuteNonQueryAsync();
+                    var idGenerado = await command.ExecuteScalarAsync();
+                    return Convert.ToInt32(idGenerado);
                 }
             }
             
