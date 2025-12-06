@@ -81,11 +81,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     
                     miQuery = filters.campoOrden.ToLower() switch
                     {
-                        "Número de pedido" => esDescendente ? miQuery.OrderByDescending(p => p.idPedido) : miQuery.OrderBy(p => p.idPedido),
-                        "Producto" => esDescendente ? miQuery.OrderByDescending(p => p.idProducto) : miQuery.OrderBy(p => p.idProducto),
-                        "Descuento" => esDescendente ? miQuery.OrderByDescending(p => p.descuento) : miQuery.OrderBy(p => p.descuento),
-                        "Tipo de IVA" => esDescendente ? miQuery.OrderByDescending(p => p.idTipoIVA) : miQuery.OrderBy(p => p.idTipoIVA),
-                        "Importe total" => esDescendente ? miQuery.OrderByDescending(p => p.totalLinea) : miQuery.OrderBy(p => p.totalLinea),
+                        "idpedido" => esDescendente ? miQuery.OrderByDescending(p => p.idPedido) : miQuery.OrderBy(p => p.idPedido),
+                        "producto" => esDescendente ? miQuery.OrderByDescending(p => p.idProducto) : miQuery.OrderBy(p => p.idProducto),
+                        "descuento" => esDescendente ? miQuery.OrderByDescending(p => p.descuento) : miQuery.OrderBy(p => p.descuento),
+                        "tipoiva" => esDescendente ? miQuery.OrderByDescending(p => p.idTipoIVA) : miQuery.OrderBy(p => p.idTipoIVA),
+                        "totallinea" => esDescendente ? miQuery.OrderByDescending(p => p.totalLinea) : miQuery.OrderBy(p => p.totalLinea),
                         _ => miQuery.OrderBy(c => c.idLineaPedido)
                     };
                 }
@@ -93,7 +93,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 {
                     miQuery = miQuery.OrderBy(p => p.idPedido);
                 }
-                
+
                 pedidosLin = miQuery.ToList();
             }
 

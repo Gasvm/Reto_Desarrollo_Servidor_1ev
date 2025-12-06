@@ -36,7 +36,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idCliente = reader.GetInt32(1),
                                 fechaPedido = reader.GetDateTime(2),
                                 idMedioPago = reader.GetInt32(3),
-                                idTarjetaCredito =  reader.IsDBNull(4) ? null :reader.GetInt32(4)
+                                idTarjetaCredito = reader.GetInt32(4),
+                                activo = reader.GetBoolean(5)
                             };
 
                             pedidosCab.Add(pedidoCab);
@@ -89,11 +90,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     
                     miQuery = filters.campoOrden.ToLower() switch
                     {
-                        "Id cliente" => esDescendente ? miQuery.OrderByDescending(p => p.idCliente) : miQuery.OrderBy(p => p.idCliente),
-                        "Fecha del pedido" => esDescendente ? miQuery.OrderByDescending(p => p.fechaPedido) : miQuery.OrderBy(p => p.fechaPedido),
-                        "Medio de Pago" => esDescendente ? miQuery.OrderByDescending(p => p.idMedioPago) : miQuery.OrderBy(p => p.idMedioPago),
-                        "Tarjeta de Crédito" => esDescendente ? miQuery.OrderByDescending(p => p.idTarjetaCredito) : miQuery.OrderBy(p => p.idTarjetaCredito),
-                        _ => miQuery.OrderBy(c => c.idCliente)
+                        "idcliente" => esDescendente ? miQuery.OrderByDescending(p => p.idCliente) : miQuery.OrderBy(p => p.idCliente),
+                        "fechapedido" => esDescendente ? miQuery.OrderByDescending(p => p.fechaPedido) : miQuery.OrderBy(p => p.fechaPedido),
+                        "mediopago" => esDescendente ? miQuery.OrderByDescending(p => p.idMedioPago) : miQuery.OrderBy(p => p.idMedioPago),
+                        "tarjetacredito" => esDescendente ? miQuery.OrderByDescending(p => p.idTarjetaCredito) : miQuery.OrderBy(p => p.idTarjetaCredito),
+                        _ => miQuery.OrderBy(c => c.idPedido)
                     };
 
                 }

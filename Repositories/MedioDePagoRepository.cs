@@ -71,10 +71,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     miQuery = filters.campoOrden.ToLower() switch
                     {
                         "descripcion" => esDescendente ? miQuery.OrderByDescending(m => m.descripcion) : miQuery.OrderBy(m => m.descripcion),
-                        "Fecha de creacion" => esDescendente ? miQuery.OrderByDescending(m => m.fechaCreacion) : miQuery.OrderBy(m => m.fechaCreacion),
+                        "fechacreacion" => esDescendente ? miQuery.OrderByDescending(m => m.fechaCreacion) : miQuery.OrderBy(m => m.fechaCreacion),
                         _ => miQuery.OrderBy(m => m.idMedioDePago)
                     };
-                    mediosDePago = miQuery.ToList();
                 }
                 else
                 {

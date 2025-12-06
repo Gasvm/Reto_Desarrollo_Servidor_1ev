@@ -35,7 +35,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idTipoIVA = reader.GetInt32(0),
                                 descripcion = reader.GetString(1),
                                 tasa = reader.GetDecimal(2),
-                                fechaCreacion = reader.GetDateTime(3)
+                                fechaCreacion = reader.GetDateTime(3),
+                                activo = reader.GetBoolean(4)
                             };
 
                             tiposIVA.Add(tipoIVA);
@@ -93,9 +94,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     
                     miQuery = filters.campoOrden.ToLower() switch
                     {
-                        "Descripción" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
-                        "Tasa" => esDescendente ? miQuery.OrderByDescending(t => t.tasa) : miQuery.OrderBy(t => t.tasa),
-                        "Fecha de creación" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
+                        "descripcion" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
+                        "tasa" => esDescendente ? miQuery.OrderByDescending(t => t.tasa) : miQuery.OrderBy(t => t.tasa),
+                        "fechacreacion" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
                         _ => miQuery.OrderBy(t => t.idTipoIVA)
                     };
                 }

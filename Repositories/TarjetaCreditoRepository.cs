@@ -37,7 +37,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 numeroTarjeta = reader.GetString(2),
                                 fechaCaducidad = reader.GetDateTime(3),
                                 idCliente = reader.GetInt32(4),
-                                fechaCreacion = reader.GetDateTime(5)
+                                fechaCreacion = reader.GetDateTime(5),
+                                activo = reader.GetBoolean(6)
                             };
 
                             tarjetasCredito.Add(tarjetaCredito);
@@ -96,10 +97,10 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     
                     miQuery = filters.campoOrden.ToLower() switch
                     {
-                        "Descripción" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
-                        "Fecha de Caducidad" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCaducidad) : miQuery.OrderBy(t => t.fechaCaducidad),
-                        "Cliente" => esDescendente ? miQuery.OrderByDescending(t => t.idCliente) : miQuery.OrderBy(t => t.idCliente),
-                        "Fecha de creación" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
+                        "descripcion" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
+                        "fechacaducidad" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCaducidad) : miQuery.OrderBy(t => t.fechaCaducidad),
+                        "cliente" => esDescendente ? miQuery.OrderByDescending(t => t.idCliente) : miQuery.OrderBy(t => t.idCliente),
+                        "fechacreacion" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
                         _ => miQuery.OrderBy(t => t.idTarjetaCredito)
                     };
                 }

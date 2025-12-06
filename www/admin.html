@@ -147,8 +147,12 @@
                         style="max-width: 200px;">
                         <option value="nombre-ASC">Nombre (A-Z)</option>
                         <option value="nombre-DESC">Nombre (Z-A)</option>
+                        <option value="apellidos-ASC">Apellidos (A-Z)</option>
+                        <option value="apellidos-DESC">Apellidos (Z-A)</option>
                         <option value="email-ASC">Email (A-Z)</option>
                         <option value="email-DESC">Email (Z-A)</option>
+                        <option value="telefono-ASC">Teléfono (A-Z)</option>
+                        <option value="telefono-DESC">Teléfono (Z-A)</option>
                         <option value="fechacreacion-DESC">Más reciente</option>
                         <option value="fechacreacion-ASC">Más antiguo</option>
                     </select>
@@ -264,6 +268,8 @@
                         <option value="descripcion-DESC">Descripción (Z-A)</option>
                         <option value="tasa-ASC">Tasa (menor)</option>
                         <option value="tasa-DESC">Tasa (mayor)</option>
+                        <option value="fechacreacion-DESC">Más reciente</option>
+                        <option value="fechacreacion-ASC">Más antiguo</option>
                     </select>
                     <button class="btn btn--primary" onclick="buscarTiposIVA()">Buscar</button>
                 </div>
@@ -355,8 +361,12 @@
                         style="max-width: 200px;">
                         <option value="descripcion-ASC">Descripción (A-Z)</option>
                         <option value="descripcion-DESC">Descripción (Z-A)</option>
+                        <option value="cliente-ASC">Cliente (A-Z)</option>
+                        <option value="cliente-DESC">Cliente (Z-A)</option>
                         <option value="fechacaducidad-ASC">Caducidad próxima</option>
                         <option value="fechacaducidad-DESC">Caducidad lejana</option>
+                        <option value="fechacreacion-DESC">Más reciente</option>
+                        <option value="fechacreacion-ASC">Más antiguo</option>
                     </select>
                     <button class="btn btn--primary" onclick="buscarTarjetas()">Buscar</button>
                 </div>
@@ -414,6 +424,12 @@
                         style="max-width: 200px;">
                         <option value="fechapedido-DESC">Más reciente</option>
                         <option value="fechapedido-ASC">Más antiguo</option>
+                        <option value="idcliente-ASC">Cliente (menor ID)</option>
+                        <option value="idcliente-DESC">Cliente (mayor ID)</option>
+                        <option value="mediopago-ASC">Medio Pago (menor ID)</option>
+                        <option value="mediopago-DESC">Medio Pago (mayor ID)</option>
+                        <option value="tarjetacredito-ASC">Tarjeta (menor ID)</option>
+                        <option value="tarjetacredito-DESC">Tarjeta (mayor ID)</option>
                     </select>
                     <button class="btn btn--primary" onclick="cargarPedidos()">Filtrar</button>
                 </div>
