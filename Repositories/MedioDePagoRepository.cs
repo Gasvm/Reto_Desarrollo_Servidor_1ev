@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idMedioDePago, descripcion, fechaCreacion FROM tbMediosDePago";
+                string query = "SELECT idMedioDePago, descripcion, fechaCreacion, activo FROM tbMediosDePago";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -34,7 +34,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             {
                                 idMedioDePago = reader.GetInt32(0),
                                 descripcion = reader.GetString(1),
-                                fechaCreacion = reader.GetDateTime(2)
+                                fechaCreacion = reader.GetDateTime(2),
+                                activo = reader.GetBoolean(3)
                             };
 
                             mediosDePago.Add(medioDePago);

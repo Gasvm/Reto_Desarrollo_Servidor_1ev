@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito FROM tbPedidosCab";
+                string query = "SELECT idPedido, idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo FROM tbPedidosCab";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())

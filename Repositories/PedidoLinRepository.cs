@@ -24,7 +24,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 await connection.OpenAsync();
                 
                 string query = "SELECT idLineaPedido, idPedido, idProducto, precio, descuento, " + 
-                "idTipoIVA, cantidad, totalLinea FROM tbPedidosLin";
+                "idTipoIVA, cantidad, totalLinea, activo FROM tbPedidosLin";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -40,7 +40,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 descuento = reader.GetDecimal(4),
                                 idTipoIVA = reader.GetInt32(5),
                                 cantidad = reader.GetInt32(6),
-                                totalLinea = reader.GetDecimal(7)
+                                totalLinea = reader.GetDecimal(7),
+                                activo = reader.GetBoolean(8)
                             };
 
                             pedidosLin.Add(pedidoLin);

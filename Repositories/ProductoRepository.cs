@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idProducto, descripcion, precio, idTipoIVA, fechaCreacion FROM tbProductos";
+                string query = "SELECT idProducto, descripcion, precio, idTipoIVA, fechaCreacion, activo FROM tbProductos";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -36,7 +36,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 descripcion = reader.GetString(1),
                                 precio = reader.GetDecimal(2),
                                 idTipoIVA = reader.GetInt32(3),
-                                fechaCreacion = reader.GetDateTime(4)
+                                fechaCreacion = reader.GetDateTime(4),
+                                activo = reader.GetBoolean(5)
                             };
 
                             productos.Add(producto);

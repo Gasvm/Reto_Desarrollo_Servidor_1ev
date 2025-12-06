@@ -23,7 +23,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             {
                 await connection.OpenAsync();
                 
-                string query = "SELECT idCliente, nombre, apellidos, email, password, telefono, fechaCreacion FROM tbClientes";
+                string query = "SELECT idCliente, nombre, apellidos, email, password, telefono, fechaCreacion, activo FROM tbClientes";
                 using (var command = new SqlCommand(query, connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
@@ -38,7 +38,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 email = reader.GetString(3),
                                 password = reader.GetString(4),
                                 telefono = reader.GetString(5),
-                                fechaCreacion = reader.GetDateTime(6)
+                                fechaCreacion = reader.GetDateTime(6),
+                                activo = reader.GetBoolean(7)
                             };
 
                             clientes.Add(cliente);
