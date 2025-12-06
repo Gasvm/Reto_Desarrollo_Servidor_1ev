@@ -133,11 +133,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                         {
                             tipoIVA = new TipoIVA
                             {
-                                idTipoIVA = id,
-                                descripcion = reader.GetString(0),
-                                tasa = reader.GetDecimal(1),
-                                fechaCreacion = reader.GetDateTime(2),
-                                activo = reader.GetBoolean(3)
+                                idTipoIVA = reader.GetInt32(0),        
+                                descripcion = reader.GetString(1),     
+                                tasa = reader.GetDecimal(2),           
+                                fechaCreacion = reader.GetDateTime(3), 
+                                activo = reader.GetBoolean(4)
                             };
                             
                         }
