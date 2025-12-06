@@ -66,34 +66,45 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (!string.IsNullOrEmpty(_filtroDescripcionTipoIVA))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
-                                            t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA, StringComparison.OrdinalIgnoreCase));
-                    tiposIVA = miQuery.ToList();                    
+                                            t.descripcion.ToString().Contains(_filtroDescripcionTipoIVA));                    
                 }
                 // Filtro por FechaCreacionDesde
                 var _filtroFechaCreacionDesde = filters.filtroFechaCreacionDesde;
                 if (_filtroFechaCreacionDesde.HasValue)
                 {
-                    miQuery = miQuery.Where(t => t.fechaCreacion >= _filtroFechaCreacionDesde.Value);
-                    tiposIVA = miQuery.ToList();  
+                    miQuery = miQuery.Where(t => t.fechaCreacion >= _filtroFechaCreacionDesde.Value); 
                 }
                 // Filtro por FechaCreacionHasta
                 var _filtroFechaCreacionHasta = filters.filtroFechaCreacionHasta;
                 if (_filtroFechaCreacionHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCreacion <= _filtroFechaCreacionHasta.Value);
-                    tiposIVA = miQuery.ToList();  
                 }
                 // Filtro por EstadoActivo
                 var _estadoActivoTipoIVA = filters.filtroEstadoActivo;
                 if (_estadoActivoTipoIVA.HasValue)
                 {
-                    miQuery = miQuery.Where(t => t.activo == _estadoActivoTipoIVA.Value);
-                    tiposIVA = miQuery.ToList();  
+                    miQuery = miQuery.Where(t => t.activo == _estadoActivoTipoIVA.Value);  
                 }
-                // if (miQuery.Any())
-                // {
-                //     tiposIVA = miQuery.ToList();
-                // }            
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "Descripción" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
+                        "Tasa" => esDescendente ? miQuery.OrderByDescending(t => t.tasa) : miQuery.OrderBy(t => t.tasa),
+                        "Fecha de creación" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
+                        _ => miQuery.OrderBy(t => t.idTipoIVA)
+                    };
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(t => t.idTipoIVA);
+                }        
+                
+                tiposIVA = miQuery.ToList();          
                 
             }
 

@@ -46,59 +46,69 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 }
                 // Aplicación de filtros
                 var miQuery = tarjetasCredito.AsQueryable();
+
                 //Filtro por idCliente
                 var _filtroIdCliente = filters.filtroIdClienteTarjeta ?? -1;
+
                 if (_filtroIdCliente >0)
                 {
                     miQuery = miQuery.Where(t => t.idCliente == _filtroIdCliente);
-                    tarjetasCredito = miQuery.ToList();
-                }   
-                
+                }                   
 
                 //Filtro por DescripcionTarjeta
                 var _filtroDescripcionTarjeta = filters.filtroDescripcionTarjeta ?? "";
                 
-                
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
-                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta, StringComparison.OrdinalIgnoreCase));
-                    tarjetasCredito = miQuery.ToList();                    
+                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta));                    
                 }
                 // Filtro por NumeroTarjeta
                 var _filtroNumeroTarjeta = filters.filtroNumeroTarjeta ?? "";
                 if (!string.IsNullOrEmpty(_filtroNumeroTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.numeroTarjeta != null &&
-                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta, StringComparison.OrdinalIgnoreCase));
-                    tarjetasCredito = miQuery.ToList();                    
+                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta));                 
                 }
                 // Filtro por FechaCaducidadDesde
                 var _filtroFechaCaducidadDesde = filters.filtroFechaCaducidadDesde;
                 if (_filtroFechaCaducidadDesde.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad >= _filtroFechaCaducidadDesde.Value);
-                    tarjetasCredito = miQuery.ToList();
                 }
                 // Filtro por FechaCaducidadHasta
                 var _filtroFechaCaducidadHasta = filters.filtroFechaCaducidadHasta;
                 if (_filtroFechaCaducidadHasta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.fechaCaducidad <= _filtroFechaCaducidadHasta.Value);
-                    tarjetasCredito = miQuery.ToList();
                 }
                 // Filtro por EstadoActivo
                 var _estadoActivoTarjeta = filters.filtroEstadoActivo;
                 if (_estadoActivoTarjeta.HasValue)
                 {
                     miQuery = miQuery.Where(t => t.activo == _estadoActivoTarjeta.Value);
-                    tarjetasCredito = miQuery.ToList();
                 }
-                // if (miQuery.Any())
-                // {
-                //     tarjetasCredito = miQuery.ToList();
-                // }            
+
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "Descripción" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
+                        "Fecha de Caducidad" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCaducidad) : miQuery.OrderBy(t => t.fechaCaducidad),
+                        "Cliente" => esDescendente ? miQuery.OrderByDescending(t => t.idCliente) : miQuery.OrderBy(t => t.idCliente),
+                        "Fecha de creación" => esDescendente ? miQuery.OrderByDescending(t => t.fechaCreacion) : miQuery.OrderBy(t => t.fechaCreacion),
+                        _ => miQuery.OrderBy(t => t.idTarjetaCredito)
+                    };
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(t => t.idTarjetaCredito);
+                }        
                 
+                tarjetasCredito = miQuery.ToList();
             }
 
             return tarjetasCredito;

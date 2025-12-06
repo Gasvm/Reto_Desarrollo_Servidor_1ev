@@ -44,11 +44,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 // Aplicación de filtros
+                var miQuery = productos.AsQueryable();
+
                 // Filtro por DescripcionProducto
                 var _filtroDescripcionProducto = filters.filtroDescripcionProducto ?? "";
                 _filtroDescripcionProducto.AsQueryable();
-                
-                var miQuery = productos.AsQueryable();
                 
                 if (!string.IsNullOrEmpty(_filtroDescripcionProducto))
                 {
@@ -88,10 +88,25 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     productos = miQuery.ToList();
                 }
 
-                // if (miQuery.Any())
-                // {
-                //     productos = miQuery.ToList();
-                // }
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "descripcion" => esDescendente ? miQuery.OrderByDescending(p => p.descripcion) : miQuery.OrderBy(p => p.descripcion),
+                        "precio" => esDescendente ? miQuery.OrderByDescending(p => p.precio) : miQuery.OrderBy(p => p.precio),
+                        "fechacreacion" => esDescendente ? miQuery.OrderByDescending(p => p.fechaCreacion) : miQuery.OrderBy(p => p.fechaCreacion),
+                        _ => miQuery.OrderBy(p => p.idProducto)
+                    };
+                    productos = miQuery.ToList();
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(p => p.idProducto);
+                    productos = miQuery.ToList();
+                }
                 
             }
 

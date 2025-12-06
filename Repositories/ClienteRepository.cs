@@ -46,9 +46,12 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 
-                var _nombreCliente = filters.filtroNombreCliente ?? "";
+                
                                 
                 var miQuery = clientes.AsQueryable();
+                
+                // Filtro por nombre y apellidos
+                var _nombreCliente = filters.filtroNombreCliente ?? "";
 
                 if (!string.IsNullOrEmpty(_nombreCliente))
                 {
@@ -56,6 +59,16 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     clientes = miQuery.ToList();
                 }
 
+                // Filtro por email
+                var _emailCliente = filters?.filtroEmailCliente ?? "";
+                
+                if (!string.IsNullOrEmpty(_emailCliente))
+                {
+                    miQuery = miQuery.Where(c => c.email != null && c.email.Contains(_emailCliente));
+                    clientes = miQuery.ToList();
+                }
+
+                // Filtro por estadoActivo
                 var _estadoActivoCliente = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoCliente.HasValue)
@@ -64,11 +77,27 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     clientes = miQuery.ToList();
                 }
 
-                // if (miQuery.Any())
-                // {
-                //     clientes = miQuery.ToList();
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
                     
-                // }
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "nombre" => esDescendente ? miQuery.OrderByDescending(c => c.nombre) : miQuery.OrderBy(c => c.nombre),
+                        "apellidos" => esDescendente ? miQuery.OrderByDescending(c => c.apellidos) : miQuery.OrderBy(c => c.apellidos),
+                        "email" => esDescendente ? miQuery.OrderByDescending(c => c.email) : miQuery.OrderBy(c => c.email),
+                        "telefono" => esDescendente ? miQuery.OrderByDescending(c => c.telefono) : miQuery.OrderBy(c => c.telefono),
+                        "fechacreacion" => esDescendente ? miQuery.OrderByDescending(c => c.fechaCreacion) : miQuery.OrderBy(c => c.fechaCreacion),
+                        _ => miQuery.OrderBy(c => c.idCliente)
+                    };
+                    clientes = miQuery.ToList();
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(c => c.idCliente);
+                    clientes = miQuery.ToList();
+                }
                 
             }
 

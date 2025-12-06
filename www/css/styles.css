@@ -84,6 +84,13 @@ body {
 }
 
 /* Formularios */
+.form {
+    background-color: var(--color-white);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    border: 1px solid #E0E0E0;
+}
+
 .form__group {
     margin-bottom: var(--space-md);
 }
@@ -109,6 +116,21 @@ body {
     outline: 3px solid var(--color-secondary);
 }
 
+/* Barra de Filtros */
+.filter-bar {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md);
+    background-color: var(--color-white);
+    border: 1px solid #E0E0E0;
+    flex-wrap: wrap;
+}
+
+.filter-bar > * {
+    min-width: 150px;
+}
+
 /* Layout Principal (Mobile First: Sidebar oculto/abajo, Contenido 100%) */
 .layout {
     display: flex;
@@ -132,6 +154,7 @@ body {
     width: 100%;
     z-index: 100;
     padding: var(--space-xs) 0;
+    overflow-x: auto;
 }
 
 .sidebar__brand {
@@ -140,8 +163,10 @@ body {
 
 .sidebar__nav {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     list-style: none;
+    gap: var(--space-xs);
+    padding: 0 var(--space-sm);
 }
 
 .sidebar__link {
@@ -150,8 +175,9 @@ body {
     align-items: center;
     text-decoration: none;
     color: var(--color-text-light);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     padding: var(--space-xs);
+    white-space: nowrap;
 }
 
 .sidebar__link--active {
@@ -229,12 +255,18 @@ body {
     justify-content: space-between;
     text-align: center;
     transition: var(--transition);
+    cursor: pointer;
 }
 
 /* Usamos button para accesibilidad (teclado) */
 .product-card[role="button"]:focus {
     border-color: var(--color-primary);
     outline: 2px solid var(--color-primary);
+}
+
+.product-card:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
 }
 
 .product-card__title {
@@ -267,6 +299,10 @@ body {
     justify-content: space-between;
     margin-bottom: var(--space-xs);
     align-items: center;
+}
+
+.ticket__summary {
+    margin-top: var(--space-md);
 }
 
 .ticket__total {
@@ -341,6 +377,7 @@ body {
         display: flex;
         flex-direction: column;
         padding: var(--space-lg) 0;
+        overflow-y: auto;
     }
 
     .sidebar__brand {
@@ -359,10 +396,12 @@ body {
 
     .sidebar__nav {
         flex-direction: column;
+        padding: 0;
     }
 
     .sidebar__link {
         flex-direction: row;
+        justify-content: flex-start;
         font-size: 1rem;
         padding: var(--space-md) var(--space-lg);
         border-left: 4px solid transparent;

@@ -5,8 +5,13 @@ public class QueryParamsFilters {
     //Filtros genéricos para las consultas
     public bool? filtroEstadoActivo { get; set; }
 
+    //Parámetros de ordenamiento genéricos
+    public string? campoOrden { get; set; } // Campo por el que ordenar
+    public string? direccionOrden { get; set; } = "ASC"; // ASC o DESC
+
     //Filtros específicos para clientes
     public string? filtroNombreCliente { get; set; }
+    public string? filtroEmailCliente { get; set; }
     
 
     //Filtros específicos para medios de pago

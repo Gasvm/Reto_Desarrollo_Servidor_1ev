@@ -42,18 +42,19 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     }
                 }
                 
-                var _descripcionMedioDePago = filters.filtroDescripcionMedioDePago ?? "";
-                _descripcionMedioDePago.AsQueryable();
-                
+                // Aplicar filtros si se proporcionan
                 var miQuery = mediosDePago.AsQueryable();
 
+                // Filtro por descripción
+                var _descripcionMedioDePago = filters.filtroDescripcionMedioDePago ?? "";
+                
                 if (!string.IsNullOrEmpty(_descripcionMedioDePago))
                 {
                     miQuery = miQuery.Where(m => m.descripcion != null &&
-                                            m.descripcion.Contains(_descripcionMedioDePago));
-                    mediosDePago = miQuery.ToList();
+                                            m.descripcion.Contains(_descripcionMedioDePago));                    
                 }
 
+                // Filtro por estadoActivo
                 var _estadoActivoMedioDePago = filters.filtroEstadoActivo;
                 
                 if (_estadoActivoMedioDePago.HasValue)
@@ -62,12 +63,27 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     mediosDePago = miQuery.ToList();
                 }
 
-                // if (miQuery.Any())
-                // {
-                //     mediosDePago = miQuery.ToList();
-                // }
-                
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "descripcion" => esDescendente ? miQuery.OrderByDescending(m => m.descripcion) : miQuery.OrderBy(m => m.descripcion),
+                        "Fecha de creacion" => esDescendente ? miQuery.OrderByDescending(m => m.fechaCreacion) : miQuery.OrderBy(m => m.fechaCreacion),
+                        _ => miQuery.OrderBy(m => m.idMedioDePago)
+                    };
+                    mediosDePago = miQuery.ToList();
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(m => m.idMedioDePago);
+                    mediosDePago = miQuery.ToList();
+                }
+                mediosDePago = miQuery.ToList();
             }
+
 
             return mediosDePago;
         }

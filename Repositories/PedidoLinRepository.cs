@@ -56,7 +56,6 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdPedido >0)
                 {
                     miQuery = miQuery.Where(p => p.idPedido == _filtroIdPedido);
-                    pedidosLin = miQuery.ToList();
                 }
 
                 // Filtro por filtroIdProducto
@@ -65,7 +64,6 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroIdProducto > 0)
                 {
                     miQuery = miQuery.Where(p => p.idProducto == _filtroIdProducto);
-                    pedidosLin = miQuery.ToList();
                 }
 
                 // Filtro por EstadoActivo
@@ -74,14 +72,29 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoPedidoLin.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoLin.Value);
-                    pedidosLin = miQuery.ToList();
                 }
 
-                // if (miQuery.Any())
-                // {
-                //     pedidosLin = miQuery.ToList();
-                // }
+               // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "Número de pedido" => esDescendente ? miQuery.OrderByDescending(p => p.idPedido) : miQuery.OrderBy(p => p.idPedido),
+                        "Producto" => esDescendente ? miQuery.OrderByDescending(p => p.idProducto) : miQuery.OrderBy(p => p.idProducto),
+                        "Descuento" => esDescendente ? miQuery.OrderByDescending(p => p.descuento) : miQuery.OrderBy(p => p.descuento),
+                        "Tipo de IVA" => esDescendente ? miQuery.OrderByDescending(p => p.idTipoIVA) : miQuery.OrderBy(p => p.idTipoIVA),
+                        "Importe total" => esDescendente ? miQuery.OrderByDescending(p => p.totalLinea) : miQuery.OrderBy(p => p.totalLinea),
+                        _ => miQuery.OrderBy(c => c.idLineaPedido)
+                    };
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(p => p.idPedido);
+                }
                 
+                pedidosLin = miQuery.ToList();
             }
 
             return pedidosLin;

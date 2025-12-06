@@ -50,16 +50,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 var _filtroIdCliente = filters.filtroIdCliente ?? -1;
                 if (_filtroIdCliente > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente);
-                    pedidosCab = miQuery.ToList();                    
+                    miQuery = miQuery.Where(p => p.idCliente == _filtroIdCliente);                 
                 }
 
                 // Filtro por IdMedioPago
                 var _filtroIdMedioPago = filters.filtroIdMedioPago ?? -1;
                 if (_filtroIdMedioPago > 0)
                 {
-                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago);
-                    pedidosCab = miQuery.ToList();                    
+                    miQuery = miQuery.Where(p => p.idMedioPago == _filtroIdMedioPago);                   
                 }
 
                 // Filtro por FechaPedidoDesde
@@ -67,7 +65,6 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroFechaPedidoDesde.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido >= _filtroFechaPedidoDesde.Value);
-                    pedidosCab = miQuery.ToList();
                 }
 
                 // Filtro por FechaPedidoHasta
@@ -75,7 +72,6 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_filtroFechaPedidoHasta.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.fechaPedido <= _filtroFechaPedidoHasta.Value);
-                    pedidosCab = miQuery.ToList();
                 }
 
                 // Filtro por EstadoActivo
@@ -84,14 +80,29 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (_estadoActivoPedidoCab.HasValue)
                 {
                     miQuery = miQuery.Where(p => p.activo == _estadoActivoPedidoCab.Value);
-                    pedidosCab = miQuery.ToList();
                 }
 
-                // if (miQuery.Any())
-                // {
-                //     pedidosCab = miQuery.ToList();
-                // }
+                // Ordenamiento
+                if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
+                {
+                    var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
+                    
+                    miQuery = filters.campoOrden.ToLower() switch
+                    {
+                        "Id cliente" => esDescendente ? miQuery.OrderByDescending(p => p.idCliente) : miQuery.OrderBy(p => p.idCliente),
+                        "Fecha del pedido" => esDescendente ? miQuery.OrderByDescending(p => p.fechaPedido) : miQuery.OrderBy(p => p.fechaPedido),
+                        "Medio de Pago" => esDescendente ? miQuery.OrderByDescending(p => p.idMedioPago) : miQuery.OrderBy(p => p.idMedioPago),
+                        "Tarjeta de Crédito" => esDescendente ? miQuery.OrderByDescending(p => p.idTarjetaCredito) : miQuery.OrderBy(p => p.idTarjetaCredito),
+                        _ => miQuery.OrderBy(c => c.idCliente)
+                    };
+
+                }
+                else
+                {
+                    miQuery = miQuery.OrderBy(p => p.idPedido);
+                }
                 
+                pedidosCab = miQuery.ToList();
             }
 
             return pedidosCab;
