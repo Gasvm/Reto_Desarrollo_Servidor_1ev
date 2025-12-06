@@ -1,0 +1,570 @@
+{
+	"info": {
+		"_postman_id": "b3f8f9e0-1234-5678-9abc-def012345678",
+		"name": "Reto_Desarrollo_Servidor_1ev",
+		"description": "Colección de pruebas para la API del Sistema de Pedidos (More than brows)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "Obtener Todos (con filtros)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cliente?filtroEstadoActivo=true&campoOrden=nombre&direccionOrden=ASC",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cliente"
+							],
+							"query": [
+								{
+									"key": "filtroNombreCliente",
+									"value": "Juan",
+									"disabled": true
+								},
+								{
+									"key": "filtroEstadoActivo",
+									"value": "true"
+								},
+								{
+									"key": "campoOrden",
+									"value": "nombre"
+								},
+								{
+									"key": "direccionOrden",
+									"value": "ASC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cliente/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cliente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Cliente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Usuario\",\n  \"apellidos\": \"Prueba Postman\",\n  \"email\": \"usuario.postman@example.com\",\n  \"password\": \"pass1234\",\n  \"telefono\": \"600111222\",\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Cliente",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cliente"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Cliente",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idCliente\": 1,\n  \"nombre\": \"Juan Modificado\",\n  \"apellidos\": \"García López\",\n  \"email\": \"juan.garcia@email.com\",\n  \"password\": \"hash_password_123\",\n  \"telefono\": \"600999999\",\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Cliente/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cliente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Cliente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cliente/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cliente",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Obtener Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Producto?filtroPrecioMinimo=10&filtroPrecioMaximo=1000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Producto"
+							],
+							"query": [
+								{
+									"key": "filtroDescripcionProducto",
+									"value": "Laptop",
+									"disabled": true
+								},
+								{
+									"key": "filtroPrecioMinimo",
+									"value": "10"
+								},
+								{
+									"key": "filtroPrecioMaximo",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Producto/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Producto",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Producto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Monitor Curvo 32 pulgadas\",\n  \"precio\": 299.99,\n  \"idTipoIVA\": 1,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Producto",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Producto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Producto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idProducto\": 1,\n  \"descripcion\": \"Laptop HP 15.6 i7 (Oferta)\",\n  \"precio\": 750.00,\n  \"idTipoIVA\": 1,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Producto/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Producto",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Producto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Producto/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Producto",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos (Cabecera)",
+			"item": [
+				{
+					"name": "Obtener Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab?filtroIdCliente=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab"
+							],
+							"query": [
+								{
+									"key": "filtroIdCliente",
+									"value": "1"
+								},
+								{
+									"key": "filtroFechaPedidoDesde",
+									"value": "2024-01-01",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Pedido",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idCliente\": 1,\n  \"idMedioPago\": 1,\n  \"idTarjetaCredito\": 1,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos (Lineas)",
+			"item": [
+				{
+					"name": "Obtener Líneas de Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoLin?filtroIdPedido=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoLin"
+							],
+							"query": [
+								{
+									"key": "filtroIdPedido",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir Línea",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idPedido\": 1,\n  \"idProducto\": 2,\n  \"precio\": 25.50,\n  \"descuento\": 0,\n  \"idTipoIVA\": 1,\n  \"cantidad\": 2,\n  \"totalLinea\": 51.00,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoLin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoLin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tipos IVA",
+			"item": [
+				{
+					"name": "Obtener Tipos IVA",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TipoIVA",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TipoIVA"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Tipo IVA",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"IVA Especial (5%)\",\n  \"tasa\": 5.00,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/TipoIVA",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TipoIVA"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Medios de Pago",
+			"item": [
+				{
+					"name": "Obtener Medios de Pago",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/MedioDePago",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"MedioDePago"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Medio de Pago",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Bizum\",\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/MedioDePago",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"MedioDePago"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tarjetas Crédito",
+			"item": [
+				{
+					"name": "Obtener Tarjetas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TarjetaCredito",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TarjetaCredito"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Tarjeta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Mi Visa Nueva\",\n  \"numeroTarjeta\": \"4532123456780000\",\n  \"fechaCaducidad\": \"2028-12-31\",\n  \"idCliente\": 1,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/TarjetaCredito",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TarjetaCredito"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8607",
+			"type": "string"
+		}
+	]
+}
