@@ -43,9 +43,20 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpPost]
         public async Task<ActionResult<Cliente>> CreateCliente(Cliente cliente)
         {
-            var idGenerado = await _clienteService.AddAsync(cliente);
-            cliente.idCliente = idGenerado;
-            return CreatedAtAction(nameof(GetCliente), new { id = idGenerado }, cliente);
+            try
+            {
+                var idGenerado = await _clienteService.AddAsync(cliente);
+                cliente.idCliente = idGenerado;
+                return CreatedAtAction(nameof(GetCliente), new { id = idGenerado }, cliente);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { mensaje = ex.Message }); // 409 Conflict
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensaje = "Error al crear el cliente", detalle = ex.Message });
+            }
         }
 
        [HttpPut("{id}")]

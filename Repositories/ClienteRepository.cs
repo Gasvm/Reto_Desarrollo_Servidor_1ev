@@ -132,9 +132,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@FechaCreacion", cliente.fechaCreacion ?? DateTime.Now);
                     command.Parameters.AddWithValue("@Activo", cliente.activo);
 
-                    //await command.ExecuteNonQueryAsync();
-                    var idGenerado = await command.ExecuteScalarAsync();
-                    return Convert.ToInt32(idGenerado);
+                    try
+                    {
+                        var idGenerado = await command.ExecuteScalarAsync();
+                        return Convert.ToInt32(idGenerado);
+                    }
+                    catch (SqlException ex) when (ex.Number == 2627) // Violation of UNIQUE constraint
+                    {
+                        throw new InvalidOperationException($"Ya existe un cliente con el email '{cliente.email}'.", ex);
+                    }
                 }
             }
             
