@@ -37,10 +37,10 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idPedido = reader.GetInt32(1),
                                 idProducto = reader.GetInt32(2),
                                 precio = reader.GetDecimal(3),
-                                descuento = reader.GetDecimal(4),
+                                descuento = reader.IsDBNull(4) ? null : reader.GetDecimal(4),
                                 idTipoIVA = reader.GetInt32(5),
                                 cantidad = reader.GetInt32(6),
-                                totalLinea = reader.GetDecimal(7),
+                                totalLinea = reader.IsDBNull(7) ? null : reader.GetDecimal(7),
                                 activo = reader.GetBoolean(8)
                             };
 
@@ -128,10 +128,10 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idPedido = reader.GetInt32(0),
                                 idProducto = reader.GetInt32(1),
                                 precio = reader.GetDecimal(2),
-                                descuento = reader.GetDecimal(3),
+                                descuento = reader.IsDBNull(3) ? null : reader.GetDecimal(3),
                                 idTipoIVA = reader.GetInt32(4),
                                 cantidad = reader.GetInt32(5),
-                                totalLinea = reader.GetDecimal(6),
+                                totalLinea = reader.IsDBNull(6) ? null : reader.GetDecimal(6),
                                 activo = reader.GetBoolean(7)
                             };
                         }

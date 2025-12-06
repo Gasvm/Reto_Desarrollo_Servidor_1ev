@@ -35,7 +35,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idTarjetaCredito = reader.GetInt32(0),
                                 descripcion = reader.GetString(1),
                                 numeroTarjeta = reader.GetString(2),
-                                fechaCaducidad = reader.GetDateTime(3),
+                                fechaCaducidad = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
                                 idCliente = reader.GetInt32(4),
                                 fechaCreacion = reader.GetDateTime(5),
                                 activo = reader.GetBoolean(6)
@@ -136,13 +136,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                         {
                             tarjetaCredito = new TarjetaCredito
                             {
-                                idTarjetaCredito = id,
-                                descripcion = reader.GetString(0),
-                                numeroTarjeta = reader.GetString(1),
-                                fechaCaducidad = reader.GetDateTime(2),
-                                idCliente = reader.GetInt32(3),
-                                fechaCreacion = reader.GetDateTime(4),
-                                activo = reader.GetBoolean(5)
+                                idTarjetaCredito = reader.GetInt32(0), 
+                                descripcion = reader.GetString(1),     
+                                numeroTarjeta = reader.GetString(2),   
+                                fechaCaducidad = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
+                                idCliente = reader.GetInt32(4),        
+                                fechaCreacion = reader.GetDateTime(5), 
+                                activo = reader.GetBoolean(6)          
                             };
                             
                         }

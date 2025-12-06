@@ -36,7 +36,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 idCliente = reader.GetInt32(1),
                                 fechaPedido = reader.GetDateTime(2),
                                 idMedioPago = reader.GetInt32(3),
-                                idTarjetaCredito = reader.GetInt32(4),
+                                idTarjetaCredito = reader.IsDBNull(4) ? null : reader.GetInt32(4),
                                 activo = reader.GetBoolean(5)
                             };
 
@@ -131,11 +131,11 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                             pedidoCab = new PedidoCab
                             {
                                 idPedido = id,
-                                idCliente = reader.GetInt32(0),
-                                fechaPedido = reader.GetDateTime(1),
-                                idMedioPago = reader.GetInt32(2),
-                                idTarjetaCredito = reader.GetInt32(3),
-                                activo = reader.GetBoolean(4)
+                                idCliente = reader.GetInt32(1),      
+                                fechaPedido = reader.GetDateTime(2), 
+                                idMedioPago = reader.GetInt32(3),    
+                                idTarjetaCredito = reader.IsDBNull(4) ? null : reader.GetInt32(4),
+                                activo = reader.GetBoolean(5)
                             };
                         }
                     }

@@ -37,7 +37,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 apellidos = reader.GetString(2),
                                 email = reader.GetString(3),
                                 password = reader.GetString(4),
-                                telefono = reader.GetString(5),
+                                telefono = reader.IsDBNull(5) ? null : reader.GetString(5),
                                 fechaCreacion = reader.GetDateTime(6),
                                 activo = reader.GetBoolean(7)
                             };
@@ -131,7 +131,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                                 apellidos = reader.GetString(2),
                                 email = reader.GetString(3),
                                 password = reader.GetString(4),
-                                telefono = reader.GetString(5),
+                                telefono = reader.IsDBNull(5) ? null : reader.GetString(5),
                                 fechaCreacion = reader.GetDateTime(6)
                             };
                         }
