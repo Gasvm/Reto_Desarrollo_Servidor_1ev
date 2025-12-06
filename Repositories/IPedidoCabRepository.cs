@@ -6,7 +6,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
     {
         Task<List<PedidoCab>> GetAllAsync(QueryParamsFilters? filters);
         Task<PedidoCab?> GetByIdAsync(int id);
-        Task AddAsync(PedidoCab pedidoCab);
+        Task<int> AddAsync(PedidoCab pedidoCab); //Modificado para devolver el ID del pedidoCab
         Task UpdateAsync(PedidoCab pedidoCab);
         Task DeleteAsync(int id);
     }

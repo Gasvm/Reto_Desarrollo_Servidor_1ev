@@ -135,16 +135,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
 
 
         //Nos estamos planteando si sería conveniente devolver el id generado al insertar un nuevo medio de pago
-        public async Task AddAsync(PedidoCab pedidoCab)
+        public async Task<int> AddAsync(PedidoCab pedidoCab)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
-                string query = "INSERT INTO tbPedidosCab (idCliente, fechaPedido, " +
-                                "idMedioPago, idTarjetaCredito, activo) " +
-                               "VALUES (@IdCliente, @FechaPedido, @IdMedioPago, " +
-                               "@IdTarjetaCredito, @Activo,)";
+                string query = @"INSERT INTO tbPedidosCab (idCliente, fechaPedido, idMedioPago, idTarjetaCredito, activo) 
+                        VALUES (@IdCliente, @FechaPedido, @IdMedioPago, @IdTarjetaCredito, @Activo);
+                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@IdCliente", pedidoCab.idCliente ?? (object)DBNull.Value);
@@ -153,7 +152,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@IdTarjetaCredito", pedidoCab.idTarjetaCredito ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", pedidoCab.activo);
                     
-                    await command.ExecuteNonQueryAsync();
+                    try
+                    {
+                        var idGenerado = await command.ExecuteScalarAsync();
+                        return Convert.ToInt32(idGenerado);
+                    }
+                    catch (SqlException ex)
+                    {
+                        throw new InvalidOperationException($"Error al crear el pedido: {ex.Message}", ex);
+                    }
                 }
             }
             

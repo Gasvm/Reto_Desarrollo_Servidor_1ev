@@ -146,7 +146,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 string query = "INSERT INTO tbProductos (descripcion, precio, " +
                                 "idTipoIVA, fechaCreacion, activo) " +
                                "VALUES (@Descripcion, @Precio, @IdTipoIVA, " +
-                               "@FechaCreacion, @Activo,)";
+                               "@FechaCreacion, @Activo)";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", producto.descripcion ?? (object)DBNull.Value);

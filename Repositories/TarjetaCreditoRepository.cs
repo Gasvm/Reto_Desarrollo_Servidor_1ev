@@ -153,7 +153,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 string query = "INSERT INTO tbTarjetasCredito (descripcion, numeroTarjeta, " +
                                 "fechaCaducidad, idCliente, fechaCreacion, activo) " +
                                "VALUES (@Descripcion, @NumeroTarjeta, @FechaCaducidad, " +
-                               "@IdCliente, @FechaCreacion, @Activo,)";
+                               "@IdCliente, @FechaCreacion, @Activo)";
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);

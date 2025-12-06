@@ -33,8 +33,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] PedidoCab pedidoCab)
         {
-            await _pedidoCabService.AddAsync(pedidoCab);
-            return Ok();
+            try
+            {
+                var idGenerado = await _pedidoCabService.AddAsync(pedidoCab);
+                return Ok(new { idPedido = idGenerado, mensaje = "Pedido creado exitosamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
         }
 
         [HttpPut]
