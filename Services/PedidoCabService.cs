@@ -26,7 +26,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
         public async Task<int> AddAsync(PedidoCab pedidoCab)
         {
-            await _pedidoCabRepository.AddAsync(pedidoCab);
+            return await _pedidoCabRepository.AddAsync(pedidoCab);
         }
 
         public async Task UpdateAsync(PedidoCab pedidoCab)
