@@ -33,22 +33,55 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] TarjetaCredito tarjetaCredito)
         {
-            await _tarjetaCreditoService.AddAsync(tarjetaCredito);
-            return Ok();
+            try
+            {
+                await _tarjetaCreditoService.AddAsync(tarjetaCredito);
+                return Ok(new { mensaje = "Tarjeta de crédito creada exitosamente" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
         }
 
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] TarjetaCredito tarjetaCredito)
         {
-            await _tarjetaCreditoService.UpdateAsync(tarjetaCredito);
-            return Ok();
+            try
+            {
+                await _tarjetaCreditoService.UpdateAsync(tarjetaCredito);
+                return Ok(new { mensaje = "Tarjeta de crédito actualizada exitosamente" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _tarjetaCreditoService.DeleteAsync(id);
-            return Ok();
+            try
+            {
+                await _tarjetaCreditoService.DeleteAsync(id);
+                return Ok(new { mensaje = "Tarjeta de crédito eliminada exitosamente" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
         }
     }
 }

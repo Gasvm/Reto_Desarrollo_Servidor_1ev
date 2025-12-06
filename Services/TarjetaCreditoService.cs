@@ -6,10 +6,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
     public class TarjetaCreditoService : ITarjetaCreditoService
     {
         private readonly ITarjetaCreditoRepository _tarjetaCreditoRepository;
+        private readonly IClienteRepository _clienteRepository; //Añadido para validación de cliente en la asignación de tarjeta
 
-        public TarjetaCreditoService(ITarjetaCreditoRepository tarjetaCreditoRepository)
+        public bool validarConAlgLuhn = false; //Candidato a configuración por variables de entorno
+
+        public TarjetaCreditoService(ITarjetaCreditoRepository tarjetaCreditoRepository, IClienteRepository clienteRepository)
         {
             _tarjetaCreditoRepository = tarjetaCreditoRepository;
+            _clienteRepository = clienteRepository;
         }
 
         public async Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters)
@@ -26,8 +30,35 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
         public async Task AddAsync(TarjetaCredito tarjetaCredito)
         {
+            // Validar descripción
             if (string.IsNullOrWhiteSpace(tarjetaCredito.descripcion))
                 throw new ArgumentException("La descripción no puede estar vacía.");
+            
+            // Validar número de tarjeta
+            ValidarNumeroTarjeta(tarjetaCredito.numeroTarjeta);
+            
+            // Validar fecha de caducidad
+            if (tarjetaCredito.fechaCaducidad.HasValue)
+            {
+                if (tarjetaCredito.fechaCaducidad.Value.Date < DateTime.Now.Date)
+                    throw new ArgumentException("La fecha de caducidad no puede ser anterior a la fecha actual.");
+            }
+            else
+            {
+                throw new ArgumentException("La fecha de caducidad es obligatoria.");
+            }
+
+            // Validar que el cliente existe y está activo
+            if (!tarjetaCredito.idCliente.HasValue || tarjetaCredito.idCliente.Value <= 0)
+                throw new ArgumentException("Debe especificar un cliente válido.");
+
+            var clienteExiste = await _clienteRepository.GetByIdAsync(tarjetaCredito.idCliente.Value);
+            if (clienteExiste == null)
+                throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} no existe.");
+
+            if (!clienteExiste.activo)
+                throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} está inactivo.");
+
             await _tarjetaCreditoRepository.AddAsync(tarjetaCredito);
         }
 
@@ -35,8 +66,36 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
         {
             if (tarjetaCredito.idTarjetaCredito <= 0)
                 throw new ArgumentException("El ID debe ser mayor que cero.");
+
+            // Validar descripción
             if (string.IsNullOrWhiteSpace(tarjetaCredito.descripcion))
                 throw new ArgumentException("La descripción no puede estar vacía.");
+
+            // Validar número de tarjeta
+            ValidarNumeroTarjeta(tarjetaCredito.numeroTarjeta);
+            
+            // Validar fecha de caducidad
+            if (tarjetaCredito.fechaCaducidad.HasValue)
+            {
+                if (tarjetaCredito.fechaCaducidad.Value.Date < DateTime.Now.Date)
+                    throw new ArgumentException("La fecha de caducidad no puede ser anterior a la fecha actual.");
+            }
+            else
+            {
+                throw new ArgumentException("La fecha de caducidad es obligatoria.");
+            }
+
+            // Validar que el cliente existe y está activo
+            if (!tarjetaCredito.idCliente.HasValue || tarjetaCredito.idCliente.Value <= 0)
+                throw new ArgumentException("Debe especificar un cliente válido.");
+
+            var clienteExiste = await _clienteRepository.GetByIdAsync(tarjetaCredito.idCliente.Value);
+            if (clienteExiste == null)
+                throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} no existe.");
+
+            if (!clienteExiste.activo)
+                throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} está inactivo.");
+
             await _tarjetaCreditoRepository.UpdateAsync(tarjetaCredito);
         }
 
@@ -46,5 +105,57 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
                 throw new ArgumentException("El ID debe ser mayor que cero.");
             await _tarjetaCreditoRepository.DeleteAsync(id);
         }
+
+
+        // Método privado para validar número de tarjeta
+        private void ValidarNumeroTarjeta(string? numeroTarjeta)
+        {
+            if (string.IsNullOrWhiteSpace(numeroTarjeta))
+                throw new ArgumentException("El número de tarjeta no puede estar vacío.");
+
+            // Eliminar espacios y guiones
+            var numeroLimpio = numeroTarjeta.Replace(" ", "").Replace("-", "");
+
+            // Validar que solo contiene dígitos
+            if (!numeroLimpio.All(char.IsDigit))
+                throw new ArgumentException("El número de tarjeta solo puede contener dígitos.");
+
+            // Validar longitud (las tarjetas reales tienen entre 13 y 19 dígitos)
+            if (numeroLimpio.Length < 13 || numeroLimpio.Length > 19)
+                throw new ArgumentException("El número de tarjeta debe tener entre 13 y 19 dígitos.");
+
+            // Opcional: Validar con algoritmo de Luhn
+            if(validarConAlgLuhn)
+                if (!ValidarAlgoritmoLuhn(numeroLimpio))
+                    throw new ArgumentException("El número de tarjeta no es válido según el algoritmo de Luhn.");
+        }
+
+        // Algoritmo de Luhn para validar números de tarjeta
+        private bool ValidarAlgoritmoLuhn(string numero)
+        {
+            int suma = 0;
+            bool alternar = false;
+
+            // Recorrer de derecha a izquierda
+            for (int i = numero.Length - 1; i >= 0; i--)
+            {
+                int digito = int.Parse(numero[i].ToString());
+
+                if (alternar)
+                {
+                    digito *= 2;
+                    if (digito > 9)
+                        digito -= 9;
+                }
+
+                suma += digito;
+                alternar = !alternar;
+            }
+
+            return (suma % 10) == 0;
+        }
+
+
+
     }
 }
