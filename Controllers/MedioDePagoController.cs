@@ -37,12 +37,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] MedioDePago medioDePago)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] MedioDePago medioDePago)
         {
+            if (id != medioDePago.idMedioDePago)
+                return BadRequest(new { mensaje = "El ID no coincide" });
+            
             await _medioDePagoService.UpdateAsync(medioDePago);
-            return Ok();
-        }
+            return Ok(new { mensaje = "Medio de pago actualizado" });
+}
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)

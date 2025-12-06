@@ -37,13 +37,27 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] Producto producto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] Producto producto)
         {
-            await _productoService.UpdateAsync(producto);
-            return Ok();
-        }
+            if (id != producto.idProducto)
+                return BadRequest(new { mensaje = "El ID no coincide" });
 
+            var existente = await _productoService.GetByIdAsync(id);
+            if (existente == null)
+                return NotFound(new { mensaje = "Producto no encontrado" });
+
+            try
+            {
+                await _productoService.UpdateAsync(producto);
+                return Ok(new { mensaje = "Producto actualizado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al actualizar", detalle = ex.Message });
+            }
+        }
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

@@ -119,12 +119,12 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                         {
                             producto = new Producto
                             {
-                                idProducto = id,
-                                descripcion = reader.GetString(0),
-                                precio = reader.GetDecimal(1),
-                                idTipoIVA = reader.GetInt32(2),
-                                fechaCreacion = reader.GetDateTime(3),
-                                activo = reader.GetBoolean(4)
+                                idProducto = reader.GetInt32(0),
+                                descripcion = reader.GetString(1),
+                                precio = reader.GetDecimal(2),
+                                idTipoIVA = reader.GetInt32(3),
+                                fechaCreacion = reader.GetDateTime(4),
+                                activo = reader.GetBoolean(5)
                             };
                             
                         }
@@ -179,6 +179,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@IdTipoIVA", producto.idTipoIVA ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", producto.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", producto.activo);
+                    command.Parameters.AddWithValue("@Id", producto.idProducto);
+
+                    await command.ExecuteNonQueryAsync();
                 }
             }
 

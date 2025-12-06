@@ -48,9 +48,18 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] TarjetaCredito tarjetaCredito)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] TarjetaCredito tarjetaCredito)
         {
+            // Validar que el ID de la ruta coincida con el del body
+            if (id != tarjetaCredito.idTarjetaCredito)
+                return BadRequest(new { mensaje = "El ID no coincide" });
+
+            // Verificar que la tarjeta existe
+            var existente = await _tarjetaCreditoService.GetByIdAsync(id);
+            if (existente == null)
+                return NotFound(new { mensaje = "Tarjeta de crédito no encontrada" });
+
             try
             {
                 await _tarjetaCreditoService.UpdateAsync(tarjetaCredito);

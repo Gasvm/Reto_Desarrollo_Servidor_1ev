@@ -393,3 +393,71 @@ body {
         flex: 1;
     }
 }
+
+/* Sistema de Notificaciones Toast */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    padding: var(--space-md);
+    background: var(--color-white);
+    border-left: 4px solid var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 2000;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.toast--success {
+    border-left-color: #4CAF50;
+}
+
+.toast--error {
+    border-left-color: var(--color-danger);
+}
+
+.toast--warning {
+    border-left-color: #FF9800;
+}
+
+.toast__icon {
+    font-size: 1.5rem;
+}
+
+.toast__content {
+    flex: 1;
+}
+
+.toast__title {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.toast__close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--color-text-light);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}

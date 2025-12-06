@@ -5,6 +5,33 @@ let cart = [];
 let productosGlobal = [];
 let tiposIvaGlobal = [];
 
+// --- Sistema de Notificaciones ---
+function showToast(message, type = 'success', duration = 3000) {
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    toast.innerHTML = `
+        <span class="toast__icon">${icons[type]}</span>
+        <div class="toast__content">
+            <div class="toast__title">${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : 'Aviso'}</div>
+            <div>${message}</div>
+        </div>
+        <button class="toast__close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     initApp();
@@ -27,36 +54,36 @@ function logout() {
 }
 
 function initApp() {
-    // Carga de datos
     Promise.all([
         cargarTiposIVA(),
         cargarClientes(),
         cargarMediosPago(),
         cargarProductos()
-    ]).catch(err => console.error("Error inicializando datos", err));
+    ]).catch(err => {
+        console.error("Error inicializando datos", err);
+        showToast('Error al cargar datos iniciales', 'error');
+    });
 
     const fechaEl = document.getElementById('fecha-hoy');
-    if(fechaEl) fechaEl.innerText = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    if(fechaEl) fechaEl.innerText = new Date().toLocaleDateString('es-ES', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
 
-    // Listeners Formularios
     setupForm('form-cliente', 'Cliente', cargarClientes);
     setupForm('form-producto', 'Producto', cargarProductos);
 }
 
 // --- Navegación SPA ---
 window.navTo = function(secId, linkElement) {
-    // Ocultar todas las secciones
     document.querySelectorAll('.section').forEach(s => {
         s.classList.remove('section--active');
         s.setAttribute('aria-hidden', 'true');
     });
     
-    // Mostrar seleccionada
     const activeSec = document.getElementById(secId);
     activeSec.classList.add('section--active');
     activeSec.setAttribute('aria-hidden', 'false');
     
-    // Actualizar menú (BEM)
     document.querySelectorAll('.sidebar__link').forEach(a => {
         a.classList.remove('sidebar__link--active');
         a.removeAttribute('aria-current');
@@ -67,14 +94,24 @@ window.navTo = function(secId, linkElement) {
     }
 };
 
-// --- CRUD Helpers ---
+// --- CRUD Mejorado ---
 async function apiCall(endpoint, method = 'GET', body = null) {
     const options = {
         method,
         headers: { 'Content-Type': 'application/json' }
     };
     if (body) options.body = JSON.stringify(body);
-    return await fetch(`${API_URL}/${endpoint}`, options);
+    
+    const response = await fetch(`${API_URL}/${endpoint}`, options);
+    
+    // Parsear respuesta JSON si existe
+    let data = null;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+    }
+    
+    return { ok: response.ok, status: response.status, data };
 }
 
 function setupForm(formId, entity, reloadCallback) {
@@ -83,164 +120,270 @@ function setupForm(formId, entity, reloadCallback) {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const data = {};
         
-        // Mapeo básico (extender según necesidad)
+        const data = {};
+        let id = null;
+        let endpoint = entity;
+        
         if (entity === 'Cliente') {
-            data.idCliente = document.getElementById('cli-id').value || 0;
-            data.nombre = document.getElementById('cli-nombre').value;
-            data.apellidos = document.getElementById('cli-apellidos').value;
-            data.email = document.getElementById('cli-email').value;
-            data.telefono = document.getElementById('cli-telefono').value;
+            id = document.getElementById('cli-id').value;
+            data.idCliente = id ? parseInt(id) : 0;
+            data.nombre = document.getElementById('cli-nombre').value.trim();
+            data.apellidos = document.getElementById('cli-apellidos').value.trim();
+            data.email = document.getElementById('cli-email').value.trim();
+            data.telefono = document.getElementById('cli-telefono').value.trim();
             data.password = "123456"; 
             data.fechaCreacion = new Date().toISOString();
             data.activo = true;
+            
         } else if (entity === 'Producto') {
-            data.idProducto = document.getElementById('prod-id').value || 0;
-            data.descripcion = document.getElementById('prod-desc').value;
+            id = document.getElementById('prod-id').value;
+            data.idProducto = id ? parseInt(id) : 0;
+            data.descripcion = document.getElementById('prod-desc').value.trim();
             data.precio = parseFloat(document.getElementById('prod-precio').value);
             data.idTipoIVA = parseInt(document.getElementById('prod-iva').value);
             data.fechaCreacion = new Date().toISOString();
             data.activo = true;
         }
 
-        const id = data[`id${entity}`];
-        const method = (id && id != 0) ? 'PUT' : 'POST';
+        // Validaciones básicas
+        if (entity === 'Producto' && (!data.descripcion || data.precio <= 0)) {
+            showToast('Por favor completa todos los campos correctamente', 'warning');
+            return;
+        }
+
+        const isUpdate = id && id !== '' && id !== '0';
+        const method = isUpdate ? 'PUT' : 'POST';
         
+        // Para PUT, agregar ID a la URL
+        if (isUpdate) {
+            endpoint = `${entity}/${id}`;
+        }
+
         try {
-            const res = await apiCall(entity, method, data);
-            if(res.ok) {
-                alert('Guardado correctamente');
+            const result = await apiCall(endpoint, method, data);
+            
+            if (result.ok) {
+                const action = isUpdate ? 'actualizado' : 'creado';
+                showToast(`${entity} ${action} correctamente`, 'success');
                 window.limpiarForm(formId);
                 reloadCallback();
             } else {
-                alert('Error al guardar. Verifique los datos.');
+                const mensaje = result.data?.mensaje || `Error al guardar ${entity}`;
+                showToast(mensaje, 'error');
             }
-        } catch(err) { console.error(err); }
+        } catch(err) { 
+            console.error(err);
+            showToast(`Error de conexión: ${err.message}`, 'error');
+        }
     });
 }
 
 window.limpiarForm = function(formId) {
-    document.getElementById(formId).reset();
-    document.getElementById(formId).querySelector('input[type=hidden]').value = '';
+    const form = document.getElementById(formId);
+    form.reset();
+    const hiddenInput = form.querySelector('input[type=hidden]');
+    if (hiddenInput) hiddenInput.value = '';
+    
+    // Actualizar título del formulario si existe
+    const section = form.closest('.section');
+    if (section) {
+        const title = section.querySelector('.page-header__title');
+        if (title && title.dataset.originalText) {
+            title.textContent = title.dataset.originalText;
+        }
+    }
 }
 
 window.eliminar = async function(entity, id, callback) {
     if(!confirm('¿Seguro que deseas eliminar este registro?')) return;
-    await apiCall(`${entity}/${id}`, 'DELETE');
-    callback();
+    
+    try {
+        const result = await apiCall(`${entity}/${id}`, 'DELETE');
+        if (result.ok) {
+            showToast(`${entity} eliminado correctamente`, 'success');
+            callback();
+        } else {
+            showToast('Error al eliminar', 'error');
+        }
+    } catch(err) {
+        console.error(err);
+        showToast('Error de conexión', 'error');
+    }
 }
 
 // --- Carga de Datos ---
 
 async function cargarClientes() {
-    const res = await apiCall('Cliente');
-    const data = await res.json();
-    const tbody = document.getElementById('tabla-clientes');
-    const selectTPV = document.getElementById('modal-cliente');
-    
-    if(tbody) tbody.innerHTML = '';
-    if(selectTPV) selectTPV.innerHTML = '';
-
-    data.forEach(d => {
-        if(!d.activo) return;
+    try {
+        const result = await apiCall('Cliente');
+        const data = result.data || [];
+        const tbody = document.getElementById('tabla-clientes');
+        const selectTPV = document.getElementById('modal-cliente');
         
-        if(tbody) {
-            tbody.innerHTML += `
-                <tr>
-                    <td class="data-table__cell">${d.nombre} ${d.apellidos}</td>
-                    <td class="data-table__cell">${d.email}</td>
-                    <td class="data-table__cell">
-                        <button class="btn btn--sm btn--primary" onclick="editarCliente(${d.idCliente})">Editar</button>
-                        <button class="btn btn--sm btn--danger" onclick="eliminar('Cliente', ${d.idCliente}, cargarClientes)">Borrar</button>
-                    </td>
-                </tr>`;
-        }
-        if(selectTPV) selectTPV.innerHTML += `<option value="${d.idCliente}">${d.nombre} ${d.apellidos}</option>`;
-    });
+        if(tbody) tbody.innerHTML = '';
+        if(selectTPV) selectTPV.innerHTML = '';
+
+        data.forEach(d => {
+            if(!d.activo) return;
+            
+            if(tbody) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="data-table__cell">${d.nombre} ${d.apellidos}</td>
+                        <td class="data-table__cell">${d.email}</td>
+                        <td class="data-table__cell">
+                            <button class="btn btn--sm btn--primary" onclick="editarCliente(${d.idCliente})">Editar</button>
+                            <button class="btn btn--sm btn--danger" onclick="eliminar('Cliente', ${d.idCliente}, cargarClientes)">Borrar</button>
+                        </td>
+                    </tr>`;
+            }
+            if(selectTPV) selectTPV.innerHTML += `<option value="${d.idCliente}">${d.nombre} ${d.apellidos}</option>`;
+        });
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar clientes', 'error');
+    }
 }
 
 window.editarCliente = async (id) => {
-    const res = await apiCall(`Cliente/${id}`);
-    const d = await res.json();
-    document.getElementById('cli-id').value = d.idCliente;
-    document.getElementById('cli-nombre').value = d.nombre;
-    document.getElementById('cli-apellidos').value = d.apellidos;
-    document.getElementById('cli-email').value = d.email;
-    document.getElementById('cli-telefono').value = d.telefono;
-    // Forzar navegación
-    const tabLink = document.querySelector('a[onclick*="sec-clientes"]');
-    if(tabLink) tabLink.click();
+    try {
+        const result = await apiCall(`Cliente/${id}`);
+        if (!result.ok) {
+            showToast('Cliente no encontrado', 'error');
+            return;
+        }
+        
+        const d = result.data;
+        document.getElementById('cli-id').value = d.idCliente;
+        document.getElementById('cli-nombre').value = d.nombre;
+        document.getElementById('cli-apellidos').value = d.apellidos;
+        document.getElementById('cli-email').value = d.email;
+        document.getElementById('cli-telefono').value = d.telefono || '';
+        
+        // Cambiar título
+        const title = document.querySelector('#sec-clientes .page-header__title');
+        if (title) {
+            if (!title.dataset.originalText) {
+                title.dataset.originalText = title.textContent;
+            }
+            title.textContent = `Editando: ${d.nombre} ${d.apellidos}`;
+        }
+        
+        const tabLink = document.querySelector('a[onclick*="sec-clientes"]');
+        if(tabLink) tabLink.click();
+        
+        showToast('Datos cargados para edición', 'success', 2000);
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar cliente', 'error');
+    }
 };
 
 async function cargarTiposIVA() {
-    const res = await apiCall('TipoIVA');
-    tiposIvaGlobal = await res.json();
-    const select = document.getElementById('prod-iva');
-    if(select) {
-        select.innerHTML = '';
-        tiposIvaGlobal.forEach(t => {
-            if(t.activo) select.innerHTML += `<option value="${t.idTipoIVA}">${t.descripcion} (${t.tasa}%)</option>`;
-        });
+    try {
+        const result = await apiCall('TipoIVA');
+        tiposIvaGlobal = result.data || [];
+        const select = document.getElementById('prod-iva');
+        if(select) {
+            select.innerHTML = '';
+            tiposIvaGlobal.forEach(t => {
+                if(t.activo) select.innerHTML += `<option value="${t.idTipoIVA}">${t.descripcion} (${t.tasa}%)</option>`;
+            });
+        }
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar tipos de IVA', 'error');
     }
 }
 
 async function cargarProductos() {
-    const res = await apiCall('Producto');
-    productosGlobal = await res.json();
-    
-    const tbody = document.getElementById('tabla-productos');
-    const gridTPV = document.getElementById('tpv-productos');
-    
-    if(tbody) tbody.innerHTML = ''; 
-    if(gridTPV) gridTPV.innerHTML = '';
-
-    productosGlobal.forEach(d => {
-        if(!d.activo) return;
+    try {
+        const result = await apiCall('Producto');
+        productosGlobal = result.data || [];
         
-        if(tbody) {
-            tbody.innerHTML += `
-                <tr>
-                    <td class="data-table__cell">${d.descripcion}</td>
-                    <td class="data-table__cell">${d.precio.toFixed(2)} €</td>
-                    <td class="data-table__cell">
-                        <button class="btn btn--sm btn--primary" onclick="editarProducto(${d.idProducto})">Editar</button>
-                        <button class="btn btn--sm btn--danger" onclick="eliminar('Producto', ${d.idProducto}, cargarProductos)">Borrar</button>
-                    </td>
-                </tr>`;
-        }
+        const tbody = document.getElementById('tabla-productos');
+        const gridTPV = document.getElementById('tpv-productos');
+        
+        if(tbody) tbody.innerHTML = ''; 
+        if(gridTPV) gridTPV.innerHTML = '';
 
-        // Card Accesible (button)
-        if(gridTPV) {
-            gridTPV.innerHTML += `
-                <button class="product-card" onclick="addToCart(${d.idProducto})" aria-label="Añadir ${d.descripcion} al carrito">
-                    <span class="product-card__title">${d.descripcion}</span>
-                    <span class="product-card__price">${d.precio.toFixed(2)} €</span>
-                </button>`;
-        }
-    });
+        productosGlobal.forEach(d => {
+            if(!d.activo) return;
+            
+            if(tbody) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="data-table__cell">${d.descripcion}</td>
+                        <td class="data-table__cell">${d.precio.toFixed(2)} €</td>
+                        <td class="data-table__cell">
+                            <button class="btn btn--sm btn--primary" onclick="editarProducto(${d.idProducto})">Editar</button>
+                            <button class="btn btn--sm btn--danger" onclick="eliminar('Producto', ${d.idProducto}, cargarProductos)">Borrar</button>
+                        </td>
+                    </tr>`;
+            }
+
+            if(gridTPV) {
+                gridTPV.innerHTML += `
+                    <button class="product-card" onclick="addToCart(${d.idProducto})" aria-label="Añadir ${d.descripcion} al carrito">
+                        <span class="product-card__title">${d.descripcion}</span>
+                        <span class="product-card__price">${d.precio.toFixed(2)} €</span>
+                    </button>`;
+            }
+        });
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar productos', 'error');
+    }
 }
 
 window.editarProducto = async (id) => {
-    const res = await apiCall(`Producto/${id}`);
-    const d = await res.json();
-    document.getElementById('prod-id').value = d.idProducto;
-    document.getElementById('prod-desc').value = d.descripcion;
-    document.getElementById('prod-precio').value = d.precio;
-    document.getElementById('prod-iva').value = d.idTipoIVA;
-    const tabLink = document.querySelector('a[onclick*="sec-productos"]');
-    if(tabLink) tabLink.click();
+    try {
+        const result = await apiCall(`Producto/${id}`);
+        if (!result.ok) {
+            showToast('Producto no encontrado', 'error');
+            return;
+        }
+        
+        const d = result.data;
+        document.getElementById('prod-id').value = d.idProducto;
+        document.getElementById('prod-desc').value = d.descripcion;
+        document.getElementById('prod-precio').value = d.precio;
+        document.getElementById('prod-iva').value = d.idTipoIVA;
+        
+        // Cambiar título
+        const title = document.querySelector('#sec-productos .page-header__title');
+        if (title) {
+            if (!title.dataset.originalText) {
+                title.dataset.originalText = title.textContent;
+            }
+            title.textContent = `Editando: ${d.descripcion}`;
+        }
+        
+        const tabLink = document.querySelector('a[onclick*="sec-productos"]');
+        if(tabLink) tabLink.click();
+        
+        showToast('Datos cargados para edición', 'success', 2000);
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar producto', 'error');
+    }
 };
 
 async function cargarMediosPago() {
-    const res = await apiCall('MedioDePago');
-    const data = await res.json();
-    const sel = document.getElementById('modal-medio');
-    if(sel) {
-        sel.innerHTML = '';
-        data.forEach(d => {
-            if(d.activo) sel.innerHTML += `<option value="${d.idMedioDePago}">${d.descripcion}</option>`;
-        });
+    try {
+        const result = await apiCall('MedioDePago');
+        const data = result.data || [];
+        const sel = document.getElementById('modal-medio');
+        if(sel) {
+            sel.innerHTML = '';
+            data.forEach(d => {
+                if(d.activo) sel.innerHTML += `<option value="${d.idMedioDePago}">${d.descripcion}</option>`;
+            });
+        }
+    } catch(err) {
+        console.error(err);
+        showToast('Error al cargar medios de pago', 'error');
     }
 }
 
@@ -257,6 +400,7 @@ window.addToCart = function(prodId) {
         cart.push({ ...prod, cantidad: 1 });
     }
     renderCart();
+    showToast(`${prod.descripcion} agregado`, 'success', 1500);
 }
 
 function renderCart() {
@@ -267,7 +411,7 @@ function renderCart() {
     let subtotal = 0;
     
     if(cart.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding:10px;">Carrito vacío</p>';
+        container.innerHTML = '<p style="text-align:center; padding:10px; color: var(--color-text-light);">Carrito vacío</p>';
     }
 
     cart.forEach((item, index) => {
@@ -282,13 +426,13 @@ function renderCart() {
                 </div>
                 <div>
                     <span style="margin-right:8px;">${totalLinea.toFixed(2)} €</span>
-                    <button class="btn btn--sm btn--danger" onclick="removeFromCart(${index})" aria-label="Quitar ${item.descripcion}">X</button>
+                    <button class="btn btn--sm btn--danger" onclick="removeFromCart(${index})" aria-label="Quitar ${item.descripcion}">×</button>
                 </div>
             </div>
         `;
     });
 
-    const ivaEstimado = subtotal * 0.21; // Simplificación
+    const ivaEstimado = subtotal * 0.21;
     const total = subtotal;
 
     document.getElementById('lbl-subtotal').innerText = (total - ivaEstimado).toFixed(2) + ' €';
@@ -298,16 +442,21 @@ function renderCart() {
 }
 
 window.removeFromCart = function(index) {
+    const item = cart[index];
     cart.splice(index, 1);
     renderCart();
+    showToast(`${item.descripcion} eliminado del carrito`, 'success', 1500);
 }
 
 window.abrirModalPago = function() {
-    if(cart.length === 0) { alert('El ticket está vacío'); return; }
+    if(cart.length === 0) { 
+        showToast('El ticket está vacío', 'warning'); 
+        return; 
+    }
     const modal = document.getElementById('modal-pago');
     modal.classList.add('modal--active');
     modal.setAttribute('aria-hidden', 'false');
-    window.checkMedioPago(); // Init estado tarjetas
+    window.checkMedioPago();
 }
 
 window.cerrarModal = function() {
@@ -325,17 +474,21 @@ window.checkMedioPago = async function() {
     if(txt.includes('tarjeta')) {
         div.style.display = 'block';
         const cliId = document.getElementById('modal-cliente').value;
-        // Cargar tarjetas del cliente
-        const res = await apiCall('TarjetaCredito'); 
-        const all = await res.json();
-        // Filtro manual (mejorar con query params en backend)
-        const filtered = all.filter(t => t.idCliente == cliId && t.activo);
         
-        selTarj.innerHTML = '';
-        if(filtered.length > 0) {
-            filtered.forEach(t => selTarj.innerHTML += `<option value="${t.idTarjetaCredito}">${t.descripcion} (***${t.numeroTarjeta.slice(-4)})</option>`);
-        } else {
-            selTarj.innerHTML = '<option value="">Sin tarjetas registradas</option>';
+        try {
+            const result = await apiCall('TarjetaCredito'); 
+            const all = result.data || [];
+            const filtered = all.filter(t => t.idCliente == cliId && t.activo);
+            
+            selTarj.innerHTML = '';
+            if(filtered.length > 0) {
+                filtered.forEach(t => selTarj.innerHTML += `<option value="${t.idTarjetaCredito}">${t.descripcion} (***${t.numeroTarjeta.slice(-4)})</option>`);
+            } else {
+                selTarj.innerHTML = '<option value="">Sin tarjetas registradas</option>';
+            }
+        } catch(err) {
+            console.error(err);
+            showToast('Error al cargar tarjetas', 'error');
         }
     } else {
         div.style.display = 'none';
@@ -361,18 +514,18 @@ window.procesarPedido = async function() {
     };
 
     try {
-        // 1. Cabecera
-        await apiCall('PedidoCab', 'POST', cabecera);
+        const resultCab = await apiCall('PedidoCab', 'POST', cabecera);
         
-        // 2. Recuperar ID (Workaround por void return)
-        const resPed = await apiCall(`PedidoCab?filtroIdCliente=${clienteId}`);
-        const pedidos = await resPed.json();
-        const ultimo = pedidos.sort((a,b) => b.idPedido - a.idPedido)[0];
+        if (!resultCab.ok) {
+            showToast('Error al crear pedido', 'error');
+            return;
+        }
 
-        // 3. Líneas
+        const idPedido = resultCab.data.idPedido;
+
         for(const item of cart) {
             const linea = {
-                idPedido: ultimo.idPedido,
+                idPedido: idPedido,
                 idProducto: item.idProducto,
                 precio: item.precio,
                 descuento: 0,
@@ -384,13 +537,13 @@ window.procesarPedido = async function() {
             await apiCall('PedidoLin', 'POST', linea);
         }
 
-        alert('Venta realizada con éxito');
+        showToast('Venta realizada con éxito', 'success');
         cart = [];
         renderCart();
         cerrarModal();
 
     } catch(err) {
         console.error(err);
-        alert('Error procesando la venta');
+        showToast('Error procesando la venta', 'error');
     }
 }

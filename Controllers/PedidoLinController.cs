@@ -37,11 +37,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] PedidoLin pedidoLin)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] PedidoLin pedidoLin)
         {
+            if (id != pedidoLin.idLineaPedido)
+                return BadRequest(new { mensaje = "El ID no coincide" });
+            
             await _pedidoLinService.UpdateAsync(pedidoLin);
-            return Ok();
+            return Ok(new { mensaje = "Línea actualizada" });
         }
 
         [HttpDelete("{id}")]

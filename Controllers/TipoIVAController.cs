@@ -37,11 +37,14 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Update([FromBody] TipoIVA tipoIVA)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] TipoIVA tipoIVA)
         {
+            if (id != tipoIVA.idTipoIVA)
+                return BadRequest(new { mensaje = "El ID no coincide" });
+            
             await _tipoIVAService.UpdateAsync(tipoIVA);
-            return Ok();
+            return Ok(new { mensaje = "Tipo IVA actualizado" });
         }
 
         [HttpDelete("{id}")]
