@@ -41,7 +41,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cliente>> CreateBebida(Cliente cliente)
+        public async Task<ActionResult<Cliente>> CreateCliente(Cliente cliente)
         {
             await _clienteService.AddAsync(cliente);
             return CreatedAtAction(nameof(GetCliente), new { id = cliente.idCliente }, cliente);
