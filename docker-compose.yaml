@@ -18,21 +18,20 @@ services:
     restart: unless-stopped
 
   api:
-    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    image: gsvmm/reto-desarrollo-api:latest
     container_name: dotnet_api
     build:
-      context: ./api
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8607:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SistemaPedidosDB;User=sa;Password=AlejandroPonnosUn10(!);TrustServerCertificate=True;
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__SistemaPedidosDB=Server=sqlserver,1433;Database=SistemaPedidosDB;User Id=sa;Password=AlejandroPonnosUn10(!);TrustServerCertificate=True;
       - APP_NAME=Sistema de Gestión - More Than Brows
     depends_on:
       - sqlserver
-    volumes:
-      - ./api:/app
     networks:
       - backend
     restart: unless-stopped
