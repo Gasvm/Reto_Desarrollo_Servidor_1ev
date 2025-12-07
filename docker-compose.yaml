@@ -26,6 +26,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SistemaPedidosDB;User=sa;Password=AlejandroPonnosUn10(!);TrustServerCertificate=True;
+      - APP_NAME=Sistema de Gestión - More Than Brows
     depends_on:
       - sqlserver
     volumes:

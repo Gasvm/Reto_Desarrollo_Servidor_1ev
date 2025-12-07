@@ -4,6 +4,8 @@ using Reto_Desarrollo_Servidor_1ev.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SistemaPedidosDB");
+// Nombre de la aplicación - Variable de entorno
+var appName = Environment.GetEnvironmentVariable("APP_NAME") ?? "More Than Brows API";
 
 // Espacio reservado para registrar Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
@@ -27,7 +29,15 @@ builder.Services.AddScoped<ITipoIVAService, TipoIVAService>();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configura swagger para mostrar el nombre dinámico en la documentación
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = appName,
+        Version = "v1" 
+    });
+});
 
 /* Configuración CORS para permitir solicitudes desde el front-end */
 builder.Services.AddCors(options =>
