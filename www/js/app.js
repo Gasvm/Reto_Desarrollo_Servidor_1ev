@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5044/api'; 
+const API_URL = 'http://localhost:8607/api'; 
 
 // --- Estado Global ---
 let cart = [];
