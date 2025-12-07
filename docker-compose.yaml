@@ -1,7 +1,4 @@
-version: '3.9'
-
 services:
-
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
@@ -11,6 +8,7 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=AlejandroPonnosUn10(!)
       - MSSQL_PID=Express
+      - MSSQL_MEMORY_LIMIT_MB=2048
     volumes:
       - sqlserver_data:/var/opt/mssql
     networks:
@@ -53,6 +51,7 @@ services:
       - APP_NAME=Sistema de Gestión - More Than Brows
     depends_on:
       - sqlserver
+      - db-init
     networks:
       - backend
     restart: unless-stopped
