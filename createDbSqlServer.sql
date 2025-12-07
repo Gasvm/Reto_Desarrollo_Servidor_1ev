@@ -1,17 +1,29 @@
--- Crear base de datos
-CREATE DATABASE SistemaPedidosDB;
+USE master;
+GO
+
+-- Crear base de datos solo si no existe
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'SistemaPedidosDB')
+BEGIN
+    CREATE DATABASE SistemaPedidosDB;
+    PRINT 'Base de datos SistemaPedidosDB creada correctamente';
+END
+ELSE
+BEGIN
+    PRINT 'Base de datos SistemaPedidosDB ya existe';
+END
+GO
 
 -- Verificar que la base de datos se creó correctamente
 SELECT name, database_id, create_date 
 FROM sys.databases 
 WHERE name = 'SistemaPedidosDB';
+GO
 
 -- Usar la base de datos
 USE SistemaPedidosDB;
+GO
 
--- ================================
 -- CREAR TABLAS (Orden: Master -> Detail)
--- ================================
 
 -- Tabla tbTiposIVA (Tabla maestra - sin dependencias)
 CREATE TABLE tbTiposIVA (
