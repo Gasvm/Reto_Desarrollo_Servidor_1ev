@@ -17,6 +17,27 @@ services:
       - backend
     restart: unless-stopped
 
+  db-init:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: db-init
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./createDbSqlServer.sql:/createDbSqlServer.sql
+    networks:
+      - backend
+    command: >
+      bash -c "
+      echo ' Esperando a que SQL Server esté listo...' &&
+      sleep 35 &&
+      echo ' Ejecutando script de inicialización...' &&
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'AlejandroPonnosUn10(!)' -i /createDbSqlServer.sql &&
+      echo ' Base de datos inicializada correctamente' &&
+      echo ' Verificando tablas creadas:' &&
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'AlejandroPonnosUn10(!)' -d SistemaPedidosDB -Q 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME'
+      "
+    restart: "no"
+
   api:
     image: gsvmm/reto-desarrollo-api:latest
     container_name: dotnet_api
