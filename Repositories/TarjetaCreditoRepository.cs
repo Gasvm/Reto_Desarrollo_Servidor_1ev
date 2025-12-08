@@ -13,7 +13,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             _connectionString = configuration.GetConnectionString("SistemaPedidosDB") ?? "Not found";
         }
 
-        
+
         //Método asíncrono para obtener todas las tarjetas de la base de datos
         public async Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters)
         {
@@ -22,7 +22,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                
+
                 string query = "SELECT idTarjetaCredito, descripcion, numeroTarjeta, fechaCaducidad, idCliente, fechaCreacion, activo FROM tbTarjetasCredito";
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -51,25 +51,25 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 //Filtro por idCliente
                 var _filtroIdCliente = filters.filtroIdClienteTarjeta ?? -1;
 
-                if (_filtroIdCliente >0)
+                if (_filtroIdCliente > 0)
                 {
                     miQuery = miQuery.Where(t => t.idCliente == _filtroIdCliente);
-                }                   
+                }
 
                 //Filtro por DescripcionTarjeta
                 var _filtroDescripcionTarjeta = filters.filtroDescripcionTarjeta ?? "";
-                
+
                 if (!string.IsNullOrEmpty(_filtroDescripcionTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.descripcion != null &&
-                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta));                    
+                                            t.descripcion.ToString().Contains(_filtroDescripcionTarjeta));
                 }
                 // Filtro por NumeroTarjeta
                 var _filtroNumeroTarjeta = filters.filtroNumeroTarjeta ?? "";
                 if (!string.IsNullOrEmpty(_filtroNumeroTarjeta))
                 {
                     miQuery = miQuery.Where(t => t.numeroTarjeta != null &&
-                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta));                 
+                                            t.numeroTarjeta.ToString().Contains(_filtroNumeroTarjeta));
                 }
                 // Filtro por FechaCaducidadDesde
                 var _filtroFechaCaducidadDesde = filters.filtroFechaCaducidadDesde;
@@ -94,7 +94,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 if (filters != null && !string.IsNullOrEmpty(filters.campoOrden))
                 {
                     var esDescendente = filters.direccionOrden?.ToUpper() == "DESC";
-                    
+
                     miQuery = filters.campoOrden.ToLower() switch
                     {
                         "descripcion" => esDescendente ? miQuery.OrderByDescending(t => t.descripcion) : miQuery.OrderBy(t => t.descripcion),
@@ -107,8 +107,8 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 else
                 {
                     miQuery = miQuery.OrderBy(t => t.idTarjetaCredito);
-                }        
-                
+                }
+
                 tarjetasCredito = miQuery.ToList();
             }
 
@@ -136,15 +136,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                         {
                             tarjetaCredito = new TarjetaCredito
                             {
-                                idTarjetaCredito = reader.GetInt32(0), 
-                                descripcion = reader.GetString(1),     
-                                numeroTarjeta = reader.GetString(2),   
+                                idTarjetaCredito = reader.GetInt32(0),
+                                descripcion = reader.GetString(1),
+                                numeroTarjeta = reader.GetString(2),
                                 fechaCaducidad = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
-                                idCliente = reader.GetInt32(4),        
-                                fechaCreacion = reader.GetDateTime(5), 
-                                activo = reader.GetBoolean(6)          
+                                idCliente = reader.GetInt32(4),
+                                fechaCreacion = reader.GetDateTime(5),
+                                activo = reader.GetBoolean(6)
                             };
-                            
+
                         }
                     }
                 }
@@ -154,8 +154,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
         }
 
 
-        //Nos estamos planteando si sería conveniente devolver el id generado al insertar un nuevo medio de pago
-        public async Task AddAsync(TarjetaCredito tarjetaCredito)
+        public async Task<int> AddAsync(TarjetaCredito tarjetaCredito)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -164,7 +163,9 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                 string query = "INSERT INTO tbTarjetasCredito (descripcion, numeroTarjeta, " +
                                 "fechaCaducidad, idCliente, fechaCreacion, activo) " +
                                "VALUES (@Descripcion, @NumeroTarjeta, @FechaCaducidad, " +
-                               "@IdCliente, @FechaCreacion, @Activo)";
+                               "@IdCliente, @FechaCreacion, @Activo); " +
+                               "SELECT CAST(SCOPE_IDENTITY() AS int);"; // Devuelve el ID generado
+
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Descripcion", tarjetaCredito.descripcion ?? (object)DBNull.Value);
@@ -173,13 +174,13 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
                     command.Parameters.AddWithValue("@IdCliente", tarjetaCredito.idCliente ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@FechaCreacion", tarjetaCredito.fechaCreacion ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Activo", tarjetaCredito.activo);
-                    
-                    await command.ExecuteNonQueryAsync();
+
+                    var idGenerado = await command.ExecuteScalarAsync();
+                    return Convert.ToInt32(idGenerado);
                 }
             }
-            
         }
-        
+
 
         public async Task UpdateAsync(TarjetaCredito tarjetaCredito)
         {

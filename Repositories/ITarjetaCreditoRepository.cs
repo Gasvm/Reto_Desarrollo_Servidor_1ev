@@ -6,7 +6,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Repositories
     {
         Task<List<TarjetaCredito>> GetAllAsync(QueryParamsFilters? filters);
         Task<TarjetaCredito?> GetByIdAsync(int id);
-        Task AddAsync(TarjetaCredito tarjetaCredito);
+        Task<int> AddAsync(TarjetaCredito tarjetaCredito);
         Task UpdateAsync(TarjetaCredito tarjetaCredito);
         Task DeleteAsync(int id);
     }
