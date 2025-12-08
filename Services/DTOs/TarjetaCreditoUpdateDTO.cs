@@ -4,7 +4,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Models.DTOs
     {
         public int IdTarjetaCredito { get; set; }
         public string Descripcion { get; set; }
-        public string? NumeroTarjeta { get; set; } // Opcional en update
+        public string? NumeroTarjeta { get; set; }
         public DateTime FechaCaducidad { get; set; }
         public int IdCliente { get; set; }
         public bool Activo { get; set; }
