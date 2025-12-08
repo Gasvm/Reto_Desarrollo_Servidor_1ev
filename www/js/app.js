@@ -853,14 +853,40 @@ function renderPedidos(pedidos) {
 
 window.verDetallePedido = async (id) => {
     try {
-        const result = await apiCall(`PedidoLin?filtroIdPedido=${id}`);
-        const lineas = result.data || [];
+        const result = await apiCall(`PedidoCab/${id}/completo`);
         
-        let detalle = `Líneas del Pedido #${id}:\n\n`;
-        lineas.forEach(l => {
-            const prod = productosGlobal.find(p => p.idProducto === l.idProducto);
-            detalle += `- ${prod ? prod.descripcion : 'Producto N/A'} x${l.cantidad}: ${l.totalLinea.toFixed(2)} €\n`;
+        if (!result.ok) {
+            showToast('Error al cargar detalle del pedido', 'error');
+            return;
+        }
+        
+        const pedido = result.data;
+        
+        let detalle = `=== PEDIDO #${pedido.idPedido} ===\n\n`;
+        detalle += `Cliente: ${pedido.nombreCliente} ${pedido.apellidosCliente}\n`;
+        detalle += `Fecha: ${new Date(pedido.fechaPedido).toLocaleString('es-ES')}\n`;
+        detalle += `Medio de Pago: ${pedido.descripcionMedioPago}\n`;
+        if (pedido.numeroTarjetaEnmascarado) {
+            detalle += `Tarjeta: ${pedido.numeroTarjetaEnmascarado}\n`;
+        }
+        detalle += `\n--- LÍNEAS ---\n\n`;
+        
+        pedido.lineas.forEach(l => {
+            detalle += `${l.descripcionProducto}\n`;
+            detalle += `  ${l.cantidad} x ${l.precioUnitario.toFixed(2)} € = ${l.subtotalLinea.toFixed(2)} €\n`;
+            if (l.descuento > 0) {
+                detalle += `  Descuento (${l.descuento}%): -${l.descuentoAplicado.toFixed(2)} €\n`;
+            }
+            detalle += `  IVA (${l.tasaIVA}%): +${l.importeIVA.toFixed(2)} €\n`;
+            detalle += `  Total línea: ${l.totalLinea.toFixed(2)} €\n\n`;
         });
+        
+        detalle += `\n--- TOTALES ---\n`;
+        detalle += `Subtotal: ${pedido.subtotalPedido.toFixed(2)} €\n`;
+        detalle += `Descuento: -${pedido.descuentoTotal.toFixed(2)} €\n`;
+        detalle += `Base Imponible: ${pedido.baseImponibleTotal.toFixed(2)} €\n`;
+        detalle += `IVA: +${pedido.ivaTotal.toFixed(2)} €\n`;
+        detalle += `TOTAL: ${pedido.totalPedido.toFixed(2)} €\n`;
         
         alert(detalle);
     } catch(err) {

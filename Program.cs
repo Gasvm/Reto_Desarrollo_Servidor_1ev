@@ -1,6 +1,8 @@
 using Reto_Desarrollo_Servidor_1ev.Models;
 using Reto_Desarrollo_Servidor_1ev.Repositories;
 using Reto_Desarrollo_Servidor_1ev.Services;
+using Reto_Desarrollo_Servidor_1ev.Services.DTOs;
+using Reto_Desarrollo_Servidor_1ev.Models.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SistemaPedidosDB");
@@ -15,6 +17,7 @@ builder.Services.AddScoped<IPedidoLinRepository, PedidoLinRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ITarjetaCreditoRepository, TarjetaCreditoRepository>();
 builder.Services.AddScoped<ITipoIVARepository, TipoIVARepository>();
+builder.Services.AddScoped<IPedidoLinRepository, PedidoLinRepository>();
 
 // Espacio reservado para registrar Servicios
 builder.Services.AddScoped<IClienteService, ClienteService>();

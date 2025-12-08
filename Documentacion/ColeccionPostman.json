@@ -77,7 +77,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nombre\": \"Usuario\",\n  \"apellidos\": \"Prueba Postman\",\n  \"email\": \"usuario.postman@example.com\",\n  \"password\": \"pass1234\",\n  \"telefono\": \"600111222\",\n  \"activo\": true\n}"
+							"raw": "{\n  \"nombre\": \"Usuario\",\n  \"apellidos\": \"Prueba Postman\",\n  \"email\": \"usuario.postman@example.com\",\n  \"password\": \"pass1234\",\n  \"telefono\": \"600111222\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/Cliente",
@@ -104,7 +104,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"idCliente\": 1,\n  \"nombre\": \"Juan Modificado\",\n  \"apellidos\": \"García López\",\n  \"email\": \"juan.garcia@email.com\",\n  \"password\": \"hash_password_123\",\n  \"telefono\": \"600999999\",\n  \"activo\": true\n}"
+							"raw": "{\n  \"idCliente\": 1,\n  \"nombre\": \"Juan Modificado\",\n  \"apellidos\": \"García López\",\n  \"email\": \"juan.garcia@email.com\",\n  \"password\": \"nuevoPassword123\",\n  \"telefono\": \"600999999\",\n  \"activo\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/Cliente/1",
@@ -305,7 +305,47 @@
 					"response": []
 				},
 				{
-					"name": "Crear Pedido",
+					"name": "Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Pedido Completo (DTO)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/1/completo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"1",
+								"completo"
+							]
+						},
+						"description": "Obtiene el pedido completo con toda la información:\n- Datos del cliente\n- Medio de pago\n- Tarjeta (si aplica)\n- Líneas del pedido con productos y cálculos\n- Totales (subtotal, descuentos, IVA, total)"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Pedido Simple",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -326,6 +366,111 @@
 							"path": [
 								"api",
 								"PedidoCab"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Pedido Completo (DTO)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idCliente\": 1,\n  \"idMedioPago\": 1,\n  \"idTarjetaCredito\": 1,\n  \"lineas\": [\n    {\n      \"idProducto\": 2,\n      \"cantidad\": 3,\n      \"descuento\": 10\n    },\n    {\n      \"idProducto\": 5,\n      \"cantidad\": 1,\n      \"descuento\": 0\n    },\n    {\n      \"idProducto\": 7,\n      \"cantidad\": 2,\n      \"descuento\": 5\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/completo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"completo"
+							]
+						},
+						"description": "Crea un pedido completo (cabecera + líneas) en una sola operación.\nCalcula automáticamente los precios, descuentos e IVA de cada línea."
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Pedido Completo - Sin Tarjeta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idCliente\": 2,\n  \"idMedioPago\": 3,\n  \"lineas\": [\n    {\n      \"idProducto\": 1,\n      \"cantidad\": 1,\n      \"descuento\": 15\n    },\n    {\n      \"idProducto\": 4,\n      \"cantidad\": 1,\n      \"descuento\": 0\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/completo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"completo"
+							]
+						},
+						"description": "Ejemplo de pedido completo pagado en efectivo (sin tarjeta)"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Pedido",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idPedido\": 1,\n  \"idCliente\": 1,\n  \"fechaPedido\": \"2024-11-15T10:30:00\",\n  \"idMedioPago\": 2,\n  \"idTarjetaCredito\": null,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Pedido",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoCab/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoCab",
+								"1"
 							]
 						}
 					},
@@ -361,6 +506,25 @@
 					"response": []
 				},
 				{
+					"name": "Obtener Línea por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoLin/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoLin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Añadir Línea",
 					"request": {
 						"method": "POST",
@@ -372,7 +536,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"idPedido\": 1,\n  \"idProducto\": 2,\n  \"precio\": 25.50,\n  \"descuento\": 0,\n  \"idTipoIVA\": 1,\n  \"cantidad\": 2,\n  \"totalLinea\": 51.00,\n  \"activo\": true\n}"
+							"raw": "{\n  \"idPedido\": 1,\n  \"idProducto\": 2,\n  \"precio\": 25.50,\n  \"descuento\": 0,\n  \"idTipoIVA\": 1,\n  \"cantidad\": 2,\n  \"totalLinea\": 61.71,\n  \"activo\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/PedidoLin",
@@ -382,6 +546,53 @@
 							"path": [
 								"api",
 								"PedidoLin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Línea",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idLineaPedido\": 1,\n  \"idPedido\": 1,\n  \"idProducto\": 2,\n  \"precio\": 25.50,\n  \"descuento\": 10,\n  \"idTipoIVA\": 1,\n  \"cantidad\": 3,\n  \"totalLinea\": 82.86,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PedidoLin/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoLin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Línea",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PedidoLin/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PedidoLin",
+								"1"
 							]
 						}
 					},
@@ -405,6 +616,25 @@
 							"path": [
 								"api",
 								"TipoIVA"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Tipo IVA por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TipoIVA/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TipoIVA",
+								"1"
 							]
 						}
 					},
@@ -436,6 +666,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Actualizar Tipo IVA",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idTipoIVA\": 1,\n  \"descripcion\": \"IVA General (21%)\",\n  \"tasa\": 21.00,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/TipoIVA/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TipoIVA",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Tipo IVA",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TipoIVA/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TipoIVA",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -455,6 +732,25 @@
 							"path": [
 								"api",
 								"MedioDePago"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Medio de Pago por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/MedioDePago/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"MedioDePago",
+								"1"
 							]
 						}
 					},
@@ -486,6 +782,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Actualizar Medio de Pago",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idMedioDePago\": 1,\n  \"descripcion\": \"Tarjeta de Crédito\",\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/MedioDePago/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"MedioDePago",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Medio de Pago",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/MedioDePago/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"MedioDePago",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -511,6 +854,25 @@
 					"response": []
 				},
 				{
+					"name": "Obtener Tarjeta por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TarjetaCredito/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TarjetaCredito",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Crear Tarjeta",
 					"request": {
 						"method": "POST",
@@ -522,7 +884,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"descripcion\": \"Mi Visa Nueva\",\n  \"numeroTarjeta\": \"4532123456780000\",\n  \"fechaCaducidad\": \"2028-12-31\",\n  \"idCliente\": 1,\n  \"activo\": true\n}"
+							"raw": "{\n  \"descripcion\": \"Mi Visa Nueva\",\n  \"numeroTarjeta\": \"4532123456780000\",\n  \"fechaCaducidad\": \"2028-12-31\",\n  \"idCliente\": 1\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/TarjetaCredito",
@@ -532,6 +894,53 @@
 							"path": [
 								"api",
 								"TarjetaCredito"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Tarjeta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idTarjetaCredito\": 1,\n  \"descripcion\": \"Visa Gold Actualizada\",\n  \"numeroTarjeta\": \"4532123456789012\",\n  \"fechaCaducidad\": \"2027-12-31\",\n  \"idCliente\": 1,\n  \"activo\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/TarjetaCredito/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TarjetaCredito",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Tarjeta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/TarjetaCredito/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"TarjetaCredito",
+								"1"
 							]
 						}
 					},

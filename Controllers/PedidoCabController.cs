@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Reto_Desarrollo_Servidor_1ev.Services;
 using Reto_Desarrollo_Servidor_1ev.Models;
+using Reto_Desarrollo_Servidor_1ev.Services.DTOs;
+using Reto_Desarrollo_Servidor_1ev.Models.DTOs;
 
 namespace Reto_Desarrollo_Servidor_1ev.Controllers
 {
@@ -29,6 +31,61 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             if (pedido == null) return NotFound();
             return Ok(pedido);
         }
+
+        // ENDPOINT: Obtener pedido completo con toda la información
+        [HttpGet("{id}/completo")]
+        public async Task<ActionResult<PedidoCompletoDTO>> GetPedidoCompleto(int id)
+        {
+            try
+            {
+                var pedidoCompleto = await _pedidoCabService.GetPedidoCompletoAsync(id);
+                
+                if (pedidoCompleto == null)
+                    return NotFound(new { mensaje = $"Pedido con ID {id} no encontrado" });
+                
+                return Ok(pedidoCompleto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        // ENDPOINT: Crear pedido completo (cabecera + líneas en una transacción)
+        [HttpPost("completo")]
+        public async Task<ActionResult<PedidoCompletoDTO>> CreatePedidoCompleto([FromBody] CreatePedidoCompletoDTO pedidoDTO)
+        {
+            try
+            {
+                var idGenerado = await _pedidoCabService.CreatePedidoCompletoAsync(pedidoDTO);
+                
+                // Obtener el pedido completo recién creado
+                var pedidoCompleto = await _pedidoCabService.GetPedidoCompletoAsync(idGenerado);
+                
+                return CreatedAtAction(
+                    nameof(GetPedidoCompleto), 
+                    new { id = idGenerado }, 
+                    pedidoCompleto
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] PedidoCab pedidoCab)
