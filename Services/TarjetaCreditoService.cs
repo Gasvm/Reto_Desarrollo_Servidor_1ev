@@ -1,4 +1,5 @@
 using Reto_Desarrollo_Servidor_1ev.Models;
+using Reto_Desarrollo_Servidor_1ev.Models.DTOs;
 using Reto_Desarrollo_Servidor_1ev.Repositories;
 
 namespace Reto_Desarrollo_Servidor_1ev.Services
@@ -106,6 +107,67 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             await _tarjetaCreditoRepository.DeleteAsync(id);
         }
 
+        //Métodos para DTOs
+        public async Task<List<TarjetaCreditoResponseDTO>> GetAllDTOAsync(QueryParamsFilters? filters)
+        {
+            var tarjetas = await _tarjetaCreditoRepository.GetAllAsync(filters);
+            var tarjetasDTO = new List<TarjetaCreditoResponseDTO>();
+
+            foreach (var tarjeta in tarjetas)
+            {
+                var cliente = await _clienteRepository.GetByIdAsync(tarjeta.idCliente ?? 0);
+                
+                tarjetasDTO.Add(new TarjetaCreditoResponseDTO
+                {
+                    IdTarjetaCredito = tarjeta.idTarjetaCredito ?? 0,
+                    Descripcion = tarjeta.descripcion,
+                    NumeroTarjetaEnmascarado = EnmascararNumeroTarjeta(tarjeta.numeroTarjeta),
+                    FechaCaducidad = tarjeta.fechaCaducidad ?? DateTime.Now,
+                    IdCliente = tarjeta.idCliente ?? 0,
+                    NombreCliente = cliente?.nombre ?? "N/A",
+                    ApellidosCliente = cliente?.apellidos ?? "N/A",
+                    Activo = tarjeta.activo
+                });
+            }
+
+            return tarjetasDTO;
+        }
+
+        public async Task<TarjetaCreditoResponseDTO?> GetByIdDTOAsync(int id)
+        {
+            var tarjeta = await _tarjetaCreditoRepository.GetByIdAsync(id);
+            if (tarjeta == null) return null;
+
+            var cliente = await _clienteRepository.GetByIdAsync(tarjeta.idCliente ?? 0);
+
+            return new TarjetaCreditoResponseDTO
+            {
+                IdTarjetaCredito = tarjeta.idTarjetaCredito ?? 0,
+                Descripcion = tarjeta.descripcion,
+                NumeroTarjetaEnmascarado = EnmascararNumeroTarjeta(tarjeta.numeroTarjeta),
+                FechaCaducidad = tarjeta.fechaCaducidad ?? DateTime.Now,
+                IdCliente = tarjeta.idCliente ?? 0,
+                NombreCliente = cliente?.nombre ?? "N/A",
+                ApellidosCliente = cliente?.apellidos ?? "N/A",
+                Activo = tarjeta.activo
+            };
+        }
+
+        // Método helper para enmascarar número de tarjeta (oculta todos los dígitos excepto los últimos 4)
+        private string EnmascararNumeroTarjeta(string? numeroTarjeta)
+        {
+            if (string.IsNullOrEmpty(numeroTarjeta))
+                return "****";
+
+            // Eliminar espacios y guiones para trabajar solo con dígitos
+            var numeroLimpio = numeroTarjeta.Replace(" ", "").Replace("-", "");
+
+            if (numeroLimpio.Length < 4)
+                return "****";
+
+            return "****" + numeroLimpio.Substring(numeroLimpio.Length - 4);
+        }
+
 
         // Método privado para validar número de tarjeta
         private void ValidarNumeroTarjeta(string? numeroTarjeta)
@@ -154,8 +216,5 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
             return (suma % 10) == 0;
         }
-
-
-
     }
 }
