@@ -1,57 +1,98 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
 using Reto_Desarrollo_Servidor_1ev.Services;
 using Reto_Desarrollo_Servidor_1ev.Models;
+using Reto_Desarrollo_Servidor_1ev.Models.DTOs;
 
 namespace Reto_Desarrollo_Servidor_1ev.Controllers
 {
-   [Route("api/[controller]")]
-   [ApiController]
-   public class ClienteController : ControllerBase
-   {
-    private static List<Cliente> bebidas = new List<Cliente>();
-
-    private readonly IClienteService _clienteService;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ClienteController : ControllerBase
+    {
+        private readonly IClienteService _clienteService;
 
         public ClienteController(IClienteService clienteService)
         {
             _clienteService = clienteService;
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<List<Cliente>>> GetClientes([FromQuery] QueryParamsFilters? filters)
+        public async Task<ActionResult<List<ClienteResponseDTO>>> GetClientes([FromQuery] QueryParamsFilters? filters)
         {
-            
             var clientes = await _clienteService.GetAllAsync(filters);
             
-            return Ok(clientes);
+            var clientesDTO = clientes.Select(c => new ClienteResponseDTO
+            {
+                IdCliente = c.idCliente ?? 0,
+                Nombre = c.nombre,
+                Apellidos = c.apellidos,
+                Email = c.email,
+                Telefono = c.telefono,
+                FechaCreacion = c.fechaCreacion ?? DateTime.Now,
+                Activo = c.activo
+            }).ToList();
+            
+            return Ok(clientesDTO);
         }
 
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(int id)
+        public async Task<ActionResult<ClienteResponseDTO>> GetCliente(int id)
         {
             var cliente = await _clienteService.GetByIdAsync(id);
             if (cliente == null)
             {
                 return NotFound();
             }
-            return Ok(cliente);
+
+            var clienteDTO = new ClienteResponseDTO
+            {
+                IdCliente = cliente.idCliente ?? 0,
+                Nombre = cliente.nombre,
+                Apellidos = cliente.apellidos,
+                Email = cliente.email,
+                Telefono = cliente.telefono,
+                FechaCreacion = cliente.fechaCreacion ?? DateTime.Now,
+                Activo = cliente.activo
+            };
+
+            return Ok(clienteDTO);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cliente>> CreateCliente(Cliente cliente)
+        public async Task<ActionResult<ClienteResponseDTO>> CreateCliente(ClienteCreateDTO clienteDTO)
         {
             try
             {
+                var cliente = new Cliente
+                {
+                    nombre = clienteDTO.Nombre,
+                    apellidos = clienteDTO.Apellidos,
+                    email = clienteDTO.Email,
+                    password = clienteDTO.Password,
+                    telefono = clienteDTO.Telefono,
+                    fechaCreacion = DateTime.Now,
+                    activo = true
+                };
+
                 var idGenerado = await _clienteService.AddAsync(cliente);
                 cliente.idCliente = idGenerado;
-                return CreatedAtAction(nameof(GetCliente), new { id = idGenerado }, cliente);
+
+                var responseDTO = new ClienteResponseDTO
+                {
+                    IdCliente = idGenerado,
+                    Nombre = cliente.nombre,
+                    Apellidos = cliente.apellidos,
+                    Email = cliente.email,
+                    Telefono = cliente.telefono,
+                    FechaCreacion = cliente.fechaCreacion ?? DateTime.Now,
+                    Activo = cliente.activo
+                };
+
+                return CreatedAtAction(nameof(GetCliente), new { id = idGenerado }, responseDTO);
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(new { mensaje = ex.Message }); // 409 Conflict
+                return Conflict(new { mensaje = ex.Message });
             }
             catch (Exception ex)
             {
@@ -59,41 +100,45 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
             }
         }
 
-       [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCliente(int id, Cliente updatedCliente)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCliente(int id, ClienteUpdateDTO clienteDTO)
         {
+            if (id != clienteDTO.IdCliente)
+            {
+                return BadRequest(new { mensaje = "El ID no coincide" });
+            }
+
             var existingCliente = await _clienteService.GetByIdAsync(id);
             if (existingCliente == null)
             {
                 return NotFound();
             }
 
-            existingCliente.idCliente = updatedCliente.idCliente;
-            existingCliente.nombre = updatedCliente.nombre;
-            existingCliente.apellidos = updatedCliente.apellidos;
-            existingCliente.email = updatedCliente.email;
-            existingCliente.password = updatedCliente.password;
-            existingCliente.telefono = updatedCliente.telefono;
-            existingCliente.fechaCreacion = updatedCliente.fechaCreacion;
-            existingCliente.activo = updatedCliente.activo;
+            existingCliente.nombre = clienteDTO.Nombre;
+            existingCliente.apellidos = clienteDTO.Apellidos;
+            existingCliente.email = clienteDTO.Email;
+            existingCliente.telefono = clienteDTO.Telefono;
+            existingCliente.activo = clienteDTO.Activo;
             
+            if (!string.IsNullOrEmpty(clienteDTO.Password))
+            {
+                existingCliente.password = clienteDTO.Password;
+            }
 
             await _clienteService.UpdateAsync(existingCliente);
             return NoContent();
         }
 
-        
-       [HttpDelete("{id}")]
-       public async Task<IActionResult> DeleteCliente(int id)
-       {
-           var cliente = await _clienteService.GetByIdAsync(id);
-           if (cliente == null)
-           {
-               return NotFound();
-           }
-           await _clienteService.DeleteAsync(id);
-           return NoContent();
-       }
-
-   }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCliente(int id)
+        {
+            var cliente = await _clienteService.GetByIdAsync(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            await _clienteService.DeleteAsync(id);
+            return NoContent();
+        }
+    }
 }
