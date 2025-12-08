@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Reto_Desarrollo_Servidor_1ev.Services;
 using Reto_Desarrollo_Servidor_1ev.Models;
+using Reto_Desarrollo_Servidor_1ev.Models.DTOs;
 
 namespace Reto_Desarrollo_Servidor_1ev.Controllers
 {
@@ -16,27 +17,41 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TarjetaCredito>>> GetTarjetasCredito([FromQuery] QueryParamsFilters? filtros)
+        public async Task<ActionResult<List<TarjetaCreditoResponseDTO>>> GetTarjetasCredito([FromQuery] QueryParamsFilters? filtros)
         {
-            var tarjetas = await _tarjetaCreditoService.GetAllAsync(filtros);
-            return Ok(tarjetas);
+            var tarjetasDTO = await _tarjetaCreditoService.GetAllDTOAsync(filtros);
+            return Ok(tarjetasDTO);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TarjetaCredito>> GetById(int id)
+        public async Task<ActionResult<TarjetaCreditoResponseDTO>> GetById(int id)
         {
-            var tarjeta = await _tarjetaCreditoService.GetByIdAsync(id);
-            if (tarjeta == null) return NotFound();
-            return Ok(tarjeta);
+            var tarjetaDTO = await _tarjetaCreditoService.GetByIdDTOAsync(id);
+            if (tarjetaDTO == null) return NotFound();
+            return Ok(tarjetaDTO);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] TarjetaCredito tarjetaCredito)
+        public async Task<ActionResult<TarjetaCreditoResponseDTO>> Add([FromBody] TarjetaCreditoCreateDTO tarjetaDTO)
         {
             try
             {
-                await _tarjetaCreditoService.AddAsync(tarjetaCredito);
-                return Ok(new { mensaje = "Tarjeta de crédito creada exitosamente" });
+                var tarjeta = new TarjetaCredito
+                {
+                    descripcion = tarjetaDTO.Descripcion,
+                    numeroTarjeta = tarjetaDTO.NumeroTarjeta,
+                    fechaCaducidad = tarjetaDTO.FechaCaducidad,
+                    idCliente = tarjetaDTO.IdCliente,
+                    fechaCreacion = DateTime.Now,
+                    activo = true
+                };
+
+                var idGenerado = await _tarjetaCreditoService.AddAsync(tarjeta);
+
+                // Obtener y devolver DTO con número enmascarado
+                var tarjetaCreada = await _tarjetaCreditoService.GetByIdDTOAsync(idGenerado);
+                
+                return CreatedAtAction(nameof(GetById), new { id = idGenerado }, tarjetaCreada);
             }
             catch (ArgumentException ex)
             {
@@ -49,10 +64,10 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] TarjetaCredito tarjetaCredito)
+        public async Task<ActionResult> Update(int id, [FromBody] TarjetaCreditoUpdateDTO tarjetaDTO)
         {
             // Validar que el ID de la ruta coincida con el del body
-            if (id != tarjetaCredito.idTarjetaCredito)
+            if (id != tarjetaDTO.IdTarjetaCredito)
                 return BadRequest(new { mensaje = "El ID no coincide" });
 
             // Verificar que la tarjeta existe
@@ -62,7 +77,17 @@ namespace Reto_Desarrollo_Servidor_1ev.Controllers
 
             try
             {
-                await _tarjetaCreditoService.UpdateAsync(tarjetaCredito);
+                existente.descripcion = tarjetaDTO.Descripcion;
+                existente.fechaCaducidad = tarjetaDTO.FechaCaducidad;
+                existente.idCliente = tarjetaDTO.IdCliente;
+                existente.activo = tarjetaDTO.Activo;
+
+                if (!string.IsNullOrEmpty(tarjetaDTO.NumeroTarjeta))
+                {
+                    existente.numeroTarjeta = tarjetaDTO.NumeroTarjeta;
+                }
+
+                await _tarjetaCreditoService.UpdateAsync(existente);
                 return Ok(new { mensaje = "Tarjeta de crédito actualizada exitosamente" });
             }
             catch (ArgumentException ex)

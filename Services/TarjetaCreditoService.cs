@@ -60,7 +60,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             if (!clienteExiste.activo)
                 throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} está inactivo.");
 
-            return await _tarjetaCreditoRepository.AddAsync(tarjetaCredito); // Ahora devuelve el ID
+            return await _tarjetaCreditoRepository.AddAsync(tarjetaCredito); // Devuelve el ID
         }
 
         public async Task UpdateAsync(TarjetaCredito tarjetaCredito)
@@ -119,7 +119,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
                 tarjetasDTO.Add(new TarjetaCreditoResponseDTO
                 {
-                    IdTarjetaCredito = tarjeta.idTarjetaCredito ?? 0,
+                    IdTarjetaCredito = tarjeta.idTarjetaCredito,
                     Descripcion = tarjeta.descripcion,
                     NumeroTarjetaEnmascarado = EnmascararNumeroTarjeta(tarjeta.numeroTarjeta),
                     FechaCaducidad = tarjeta.fechaCaducidad ?? DateTime.Now,
@@ -142,7 +142,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
             return new TarjetaCreditoResponseDTO
             {
-                IdTarjetaCredito = tarjeta.idTarjetaCredito ?? 0,
+                IdTarjetaCredito = tarjeta.idTarjetaCredito,
                 Descripcion = tarjeta.descripcion,
                 NumeroTarjetaEnmascarado = EnmascararNumeroTarjeta(tarjeta.numeroTarjeta),
                 FechaCaducidad = tarjeta.fechaCaducidad ?? DateTime.Now,
