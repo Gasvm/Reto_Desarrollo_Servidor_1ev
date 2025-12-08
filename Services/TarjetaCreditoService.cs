@@ -29,15 +29,15 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             return await _tarjetaCreditoRepository.GetByIdAsync(id);
         }
 
-        public async Task AddAsync(TarjetaCredito tarjetaCredito)
+        public async Task<int> AddAsync(TarjetaCredito tarjetaCredito)
         {
             // Validar descripción
             if (string.IsNullOrWhiteSpace(tarjetaCredito.descripcion))
                 throw new ArgumentException("La descripción no puede estar vacía.");
-            
+
             // Validar número de tarjeta
             ValidarNumeroTarjeta(tarjetaCredito.numeroTarjeta);
-            
+
             // Validar fecha de caducidad
             if (tarjetaCredito.fechaCaducidad.HasValue)
             {
@@ -60,7 +60,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             if (!clienteExiste.activo)
                 throw new ArgumentException($"El cliente con ID {tarjetaCredito.idCliente.Value} está inactivo.");
 
-            await _tarjetaCreditoRepository.AddAsync(tarjetaCredito);
+            return await _tarjetaCreditoRepository.AddAsync(tarjetaCredito); // Ahora devuelve el ID
         }
 
         public async Task UpdateAsync(TarjetaCredito tarjetaCredito)
@@ -74,7 +74,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
 
             // Validar número de tarjeta
             ValidarNumeroTarjeta(tarjetaCredito.numeroTarjeta);
-            
+
             // Validar fecha de caducidad
             if (tarjetaCredito.fechaCaducidad.HasValue)
             {
@@ -116,7 +116,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
             foreach (var tarjeta in tarjetas)
             {
                 var cliente = await _clienteRepository.GetByIdAsync(tarjeta.idCliente ?? 0);
-                
+
                 tarjetasDTO.Add(new TarjetaCreditoResponseDTO
                 {
                     IdTarjetaCredito = tarjeta.idTarjetaCredito ?? 0,
@@ -187,7 +187,7 @@ namespace Reto_Desarrollo_Servidor_1ev.Services
                 throw new ArgumentException("El número de tarjeta debe tener entre 13 y 19 dígitos.");
 
             // Opcional: Validar con algoritmo de Luhn
-            if(validarConAlgLuhn)
+            if (validarConAlgLuhn)
                 if (!ValidarAlgoritmoLuhn(numeroLimpio))
                     throw new ArgumentException("El número de tarjeta no es válido según el algoritmo de Luhn.");
         }
